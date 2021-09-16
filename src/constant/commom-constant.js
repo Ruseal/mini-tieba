@@ -1,0 +1,2 @@
+export const LOADING_NETWORK_TIMEOUT_TIME = 30 * 1000
+export const TOAST_DURATION = 1 * 1000

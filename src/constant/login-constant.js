@@ -1,0 +1,16 @@
+export const LOGIN_BAIDU_USER = '登入百度账号'
+export const LOGIN_USER = '登入'
+export const REGISTER_USER = '注册'
+export const SET_PASSWORD = '设置登入密码'
+export const BTN_NEXT_STEP = '下一步'
+export const BTN_LOGIN = '登入'
+export const BTN_REGISTER = '注册'
+export const BTN_DETERMINE_REGISTER = '确认注册'
+export const READ_THE_AGREEMENT = '请阅读协议并勾选'
+export const USERNAME_AND_PASSWORD_FORMAT_ERROR = '账号或密码格式不正确，详见帮助查看格式'
+export const DIFFERENT_PASSWORD = '两次输入密码不一致'
+export const USER_NAME_FORMAT = /^[\w\u4e00-\u9fa5-@=.~、]{1,8}$/
+export const PASSWORD_FORMAT = /^(?![_.])[\w.]{6,16}$/
+export const NETWORK_ERROR = '网络错误'
+export const LOGIN_SUCCESSFUL = '登入成功'
+export const REGISTER_SUCCESSFULLY = '注册成功'
