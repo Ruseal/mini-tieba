@@ -1,0 +1,28 @@
+html{
+  -webkit-text-size-adjust: none;
+}
+body {
+  min-width: 300px;
+  min-height: 400px;
+  user-select: none;
+  /* overflow: hidden; */
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
