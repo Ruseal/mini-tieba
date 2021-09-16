@@ -9,7 +9,7 @@
 <script>
 import BScroll from "better-scroll";
 export default {
-  name: "",
+  name: "scroll",
   components: {},
   data() {
     return {
@@ -41,12 +41,12 @@ export default {
         return true;
       },
     },
-    stopPropagation:{
-      type:Boolean,
-      default(){
-        return false
-      }
-    }
+    stopPropagation: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
   },
   mounted() {
     this.initBScroll();
@@ -57,8 +57,7 @@ export default {
         click: this.click,
         probeType: this.probeType,
         pullUpLoad: this.pullUpLoad,
-        bounce: this.bounce
-        
+        bounce: this.bounce,
       });
       this.bs &&
         this.bs.on("scroll", (position) => {
@@ -69,14 +68,8 @@ export default {
         this.bs.on("pullingUp", () => {
           this.$emit("pullingUp");
         });
-      this.bs &&
-        this.bs.hooks.on("enable", () => {
-          console.log("开启bs");
-        });
-      this.bs &&
-        this.bs.on("disable", () => {
-          console.log("禁用bs");
-        });
+      this.bs && this.bs.hooks.on("enable", () => {});
+      this.bs && this.bs.on("disable", () => {});
     },
     scrollTo(x, y, time = 500) {
       this.bs && this.bs.scrollTo(x, y, time);

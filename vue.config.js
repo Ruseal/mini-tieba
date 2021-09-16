@@ -7,9 +7,13 @@ module.exports = {
         'common': '@/common',
         'components': '@/components',
         'constant': '@/constant',
-        'utils':'@/utils',
+        'utils': '@/utils',
         'views': '@/views',
       }
     }
   },
+  devServer: {
+    host: 'localhost',
+    port: 8000,
+  }
 }

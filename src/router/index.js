@@ -75,15 +75,16 @@ const router = new VueRouter({
   mode: 'history'
 })
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   if (['/page/user', '/page/notice'].includes(to.path)) {
-    next()
-    const res = await routerTokenAuth()
-    if (res && res.status !== 200) {
-      localStorage.removeItem('token')
-      router.replace({ name: "login-user" });
-      return
-    }
+    setTimeout(async () => {
+      const res = await routerTokenAuth()
+      if (res && res.status !== 200) {
+        localStorage.removeItem('token')
+        router.replace({ name: "login-user" });
+        return
+      }
+    })
   }
   next()
 })
