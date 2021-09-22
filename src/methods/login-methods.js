@@ -1,5 +1,6 @@
 import * as LoginConstant from '@/constant/login-constant'
 import * as CommonConstant from '@/constant/commom-constant'
+import * as StoreConstant from '@/constant/store-constant'
 import { userLogin, userRegister } from '@/api/login-net'
 import loading from '@/utils/loading'
 
@@ -175,3 +176,10 @@ const userRegisterMethod = async _this => {
     },
   });
 }
+
+// const getUserMessage = async _this => {
+//   _this.$store.commit(
+//     'savetest',
+//     { aaa: 1234567890 }
+//   );
+// }

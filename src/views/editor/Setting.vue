@@ -1,7 +1,7 @@
 <template>
   <div class="setting">
     <set-nav />
-    <scroll class="scroll">
+    <scroll class="scroll" click>
       <div class="placeholder"></div>
       <van-cell class="account-cell" title="账号管理" is-link center>
         <img slot="default" src="@/assets/img/editor/baidu_icon.png" alt="" />
@@ -84,13 +84,12 @@ export default {
     },
     async exitLoginMethod() {
       loading(this);
-      const res = await exitLogin();
-      this.$toast.clear();
       try {
-        if (res.status === 200) {
-          localStorage.removeItem("token");
-          this.$router.replace("/login-user");
-        }
+        const { status } = await exitLogin();
+        if (status !== 200) return new Error();
+        this.$toast.clear();
+        localStorage.removeItem("token");
+        this.$router.replace("/login-user");
       } catch (error) {
         this.$toast.fail("请检查网络");
       }

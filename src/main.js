@@ -14,8 +14,12 @@ import {
 
 Vue.config.productionTip = false
 
+Vue.prototype.$bus = new Vue()
+
 Vue.use(Vant)
-Vue.use(VueLazyLoad)
+Vue.use(VueLazyLoad, {
+  loading: require('./assets/img/common/lazy2.gif')
+})
 Vue.use(Switch)
 
 new Vue({
