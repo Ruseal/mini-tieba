@@ -4,13 +4,16 @@
       class="scroll-out"
       :probeType="3"
       @scrollPosition="scrollPosition"
+      click
       ref="scrollOutRef"
     >
       <div class="scroll-out-wrapper">
         <home-nav ref="homeNavRef" />
         <div v-show="isShowPullDownFreshPrompt" class="pull-refresh-success">
           {{
-            isArticleHasValue ? "wow,又有" + 22 + "条精彩内" : "没有更多内容了"
+            isArticleHasValue
+              ? "wow,又有" + newArticleListLength + "条精彩内容"
+              : "没有更多内容了"
           }}
         </div>
         <van-tabs
@@ -19,6 +22,7 @@
           animated
           swipeable
           line-width="0.5rem"
+          title-active-color="black"
           ref="tabsRef"
         >
           <van-tab v-for="(item, index) in tabsList" :title="item" :key="index">
@@ -28,6 +32,7 @@
               pullUpLoad
               @pullingUp="pullUpFresh"
               @scrollPosition="scrollInPosition"
+              click
               ref="scrollInRef"
             >
               <div v-if="dataStatus === 'loadding'">loading...</div>
@@ -59,13 +64,15 @@
                   slot="loading"
                   src="@/assets/img/home/pulldownhuaji.png"
                 />
-                <div
-                  v-for="(item, index) in articleList"
-                  :key="index"
-                  class="div-test"
-                >
-                  {{ 11 }}
-                </div>
+                <!-- ------------------------------------------------------------------------- -->
+                <article-item
+                  v-for="item in articleList"
+                  :key="item.id"
+                  :article-item="item"
+                  @image-load="imageLoad"
+                  @remove-article="removeArticle"
+                />
+                <!-- ------------------------------------------------------------------ -->
                 <div class="pullup-style">
                   {{ isArticleHasValue ? "正在加载..." : "没有更多了" }}
                 </div>
@@ -82,13 +89,17 @@
 <script>
 import { getArticleList } from "@/api/home-net";
 
+import debounce from "../../../utils/debounce";
 import Scroll from "@/components/common/Scroll.vue";
 import HomeNav from "@/components/content/home/HomeNav.vue";
+import ArticleItem from "@/components/common/ArticleItem.vue";
 export default {
   name: "home",
   components: {
     Scroll,
     HomeNav,
+    ArticleItem,
+    imageList: [],
   },
   data() {
     return {
@@ -98,10 +109,12 @@ export default {
       isShowPullDownFreshPrompt: false, //是否展示下拉刷新后的提示
       dataStatus: "loadding", //页面的展示状态
       articleList: [], //文章列表的数据
+      newArticleListLength: 0,
       isPullDownDisabled: false, // 是否禁用下拉刷新
       isArticleHasValue: true, //请求的数据列表是否为空
       offset: 0, //请求数据参数偏移值
       freshType: "pull-up", //数据刷新方式
+      freshScroll: null, //防抖函数
     };
   },
   mounted() {
@@ -110,22 +123,22 @@ export default {
     this.getArticleListMethod();
   },
   methods: {
+    //页面渲染后另内嵌套滚动禁用
     createDomHandle() {
-      //页面渲染后另内嵌套滚动禁用
       this.$nextTick(() => {
+        this.freshScroll = debounce(this.$refs.scrollInRef[0].refresh, 100);
         this.$refs.scrollInRef[0].bs.disable();
       });
     },
     async getArticleListMethod() {
-      const res = await getArticleList(this.offset, 5);
       try {
-        console.log(res);
+        const { data, status } = await getArticleList(this.offset, 5);
         //数据为空或状态码错误抛出异常
-        if (res.status !== 200) throw new Error();
+        if (status !== 200) throw new Error();
         //设置页面展示状态
         this.dataStatus = "ok";
         //判断数据是否请求完到最后
-        if (!res.data.length) {
+        if (!data.length) {
           //设置文章列表没有数据
           this.isArticleHasValue = false;
           //下拉刷新提示显隐延迟
@@ -146,14 +159,16 @@ export default {
         //判断是上拉刷新还是下拉刷新
         if (this.freshType === "pull-up") {
           //上拉刷新添加数据到数组末尾
-          this.articleList.push(...res.data);
+          this.articleList.push(...data);
+          // ---------测试-------
         } else if (this.freshType === "pull-down") {
+          this.newArticleListLength = data.length;
           //下拉刷新加载结束
           this.isLoading = false;
           //禁用下拉刷新
           this.isPullDownDisabled = true;
           //下拉刷新添加数据到数组最前
-          this.articleList.unshift(...res.data);
+          this.articleList.unshift(...data);
           //下拉刷新提示显隐延迟
           this.isShowPullDownFreshPrompt = true;
           setTimeout(() => {
@@ -172,7 +187,7 @@ export default {
           //设置可进行下一次上拉
           this.$refs.scrollInRef[0].finishPullUp();
         });
-      } catch (e) {
+      } catch (err) {
         this.dataStatus = "error";
       }
     },
@@ -211,6 +226,25 @@ export default {
         this.getArticleListMethod();
       }, 1000); //下拉加载动画过程延迟时间
     },
+    //图片加载完毕刷新滚动区域
+    imageLoad() {
+      this.freshScroll();
+    },
+    //移除贴子操作
+    removeArticle(articleId) {
+      this.articleList.splice(
+        this.articleList.indexOf(
+          this.articleList.find((item) => {
+            return item.id === articleId;
+          })
+        ),
+        1
+      );
+      //页面重新渲染后再进行实现滚动区
+      this.$nextTick(() => {
+        this.$refs.scrollInRef[0].refresh();
+      });
+    },
   },
 };
 </script>
@@ -235,6 +269,13 @@ export default {
         line-height: 30px;
       }
       .tabs {
+        /deep/ .van-tabs__line {
+          bottom: 18px;
+          background-color: rgb(84, 95, 245);
+        }
+        /deep/ .van-tab--active {
+          font-weight: 700;
+        }
         .tabs-placeholder {
           width: 80px;
         }
@@ -260,12 +301,6 @@ export default {
               color: white;
               text-align: center;
               line-height: 30px;
-            }
-            .div-test {
-              width: 100%;
-              height: 300px;
-              background-color: rgb(175, 90, 90);
-              margin-bottom: 5px;
             }
             .pullup-style {
               width: 100%;

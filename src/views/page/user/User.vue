@@ -86,16 +86,17 @@ export default {
   },
   methods: {
     async getUserMessageMethod() {
-      const res = await getUserMessage();
       try {
-        this.userMessage = res.data;
+        const { data, status } = await getUserMessage();
+        if (status !== 200) throw new Error();
+        this.userMessage = data;
         this.dataStatus = "ok";
         this.userMessage.avatar_url &&
           this.$store.dispatch(
             Constant.SAVE_USER_AVATAR,
             this.userMessage.avatar_url
           );
-      } catch (e) {
+      } catch (err) {
         this.dataStatus = "error";
       }
     },
