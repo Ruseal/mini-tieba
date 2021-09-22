@@ -38,7 +38,7 @@ export default {
     click: {
       type: Boolean,
       default() {
-        return true;
+        return false;
       },
     },
     stopPropagation: {

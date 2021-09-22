@@ -3,8 +3,8 @@
 </template>
 <style lang='less' scoped>
 .left-arrow{
-  width: 13px;
-  height: 13px;
+  width: 11px;
+  height: 11px;
   border-top: 2px solid black;
   border-left: 2px solid black;
   border-top-left-radius: 3px;
