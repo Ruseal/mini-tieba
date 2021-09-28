@@ -1,6 +1,7 @@
 <template>
   <div class="article-item">
     <user-label
+      v-if="userLabelType === 'tieba'"
       @on-right="onUserLabelRight"
       :user-label="{
         avatar: null,
@@ -8,8 +9,24 @@
         focusCount: articleItem.tieba.focusCount,
         contentCount: articleItem.tieba.contentCount,
       }"
-      label-right='exit'
+      label-right="exit"
       :label-type="['count']"
+    />
+    <user-label
+      v-if="userLabelType === 'user'"
+      @on-right="onUserLabelRight"
+      :user-label="{
+        avatar: articleItem.author.avatar,
+        title: articleItem.author.nickname
+          ? articleItem.author.nickname
+          : articleItem.author.username,
+        createTime: articleItem.createTime,
+        authId: articleItem.author.id,
+        tiebaMaxAuthId: tiebaMsg.maxAuth.id,
+      }"
+      label-right="exit"
+      :label-type="['time']"
+      isMaxAuth
     />
     <div @touchstart="touchStart" @touchmove="touchMove" @touchend="onArticle">
       <div class="font-text">
@@ -66,8 +83,9 @@
             articleItem.commentCount
           }}
         </div>
-        <div @touchend.stop>
+        <div @touchstart.stop="articleLikeHandle('sync-a')">
           <img
+            @touchend.stop
             :src="
               articleItem.isLike
                 ? require('@/assets/img/common/love_active.png')
@@ -82,10 +100,12 @@
 </template>
 
 <script>
+import mixins from "@/mixins/mixin";
 import UserLabel from "./UserLabel.vue";
 export default {
-  name: "",
+  name: "articleItem",
   components: { UserLabel },
+  mixins: [mixins],
   data() {
     return {
       ss: 1,
@@ -104,6 +124,10 @@ export default {
     this.ss = 3;
     this.createDomHandle();
   },
+  destroyed() {
+    this.$bus.$off("sync-d", this.syncHandle);
+    this.$bus.$off("sync-msg", this.syncMsg);
+  },
   props: {
     articleItem: {
       type: Object,
@@ -111,10 +135,26 @@ export default {
         return {};
       },
     },
+    tiebaMsg: {
+      type: Object,
+      require: true,
+    },
+    userLabelType: {
+      type: String,
+      default() {
+        return "tieba";
+      },
+    },
   },
   methods: {
     createDomHandle() {
       this.imageList = this.articleItem.imageList;
+      this.$bus.$on("sync-d", this.syncHandle);
+      this.$bus.$on("sync-msg", this.syncMsg);
+    },
+    syncMsg(event) {
+      if (this.articleItem.id !== event.id) return;
+      this.articleItem.commentCount += event.count;
     },
     //图片加载完后进行监听刷新滚动区
     imageLoad() {
@@ -137,7 +177,7 @@ export default {
           name: "detail",
           params: {
             id: this.articleItem.id,
-            tiebaName: this.articleItem.tieba.tiebaName
+            tiebaName: this.articleItem.tieba.tiebaName,
           },
         });
       }

@@ -27,6 +27,14 @@
         >
           楼主
         </div>
+        <div
+          v-if="isMaxAuth"
+          v-show="userLabel.authId === userLabel.tiebaMaxAuthId"
+          class="floor-max-author"
+        >
+        
+          吧主
+        </div>
         <img v-if="isLevelCard" class="level-card" :src="levelCardImg" alt="" />
         <div
           v-if="isLevelCard"
@@ -49,7 +57,7 @@
           &nbsp;&nbsp;&nbsp;贴子&nbsp;&nbsp;{{ userLabel.contentCount }}
         </div>
         <div v-if="labelType.includes('article')" class="article">
-          [99+热帖]
+          [简介]&nbsp;&nbsp;{{ userLabel.introduction }}
         </div>
       </div>
     </div>
@@ -76,7 +84,7 @@
 </template>
 
 <script>
-import formatDate from "../../utils/format-date";
+import formatDate from "@/utils/format-date";
 import LeftArrow from "./LeftArrow.vue";
 export default {
   name: "",
@@ -124,6 +132,12 @@ export default {
       },
     },
     isFloor: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    isMaxAuth: {
       type: Boolean,
       default() {
         return false;
@@ -238,7 +252,17 @@ export default {
         border-radius: 2px;
         background-color: rgb(109, 160, 253);
       }
-
+      .floor-max-author {
+        width: 28px;
+        height: 12px;
+        margin-left: 5px;
+        font-size: 8px;
+        text-align: center;
+        line-height: 13px;
+        color: white;
+        border-radius: 2px;
+        background-color: rgb(245, 157, 57);
+      }
       .level-card {
         width: 14px;
         height: 12px;

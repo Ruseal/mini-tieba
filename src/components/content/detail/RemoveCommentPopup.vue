@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import { deleteComment } from "../../../api/detail-net";
-import { getUserMessage } from "../../../api/user-net";
-import loading from "../../../utils/loading";
-import statusHandle from "../../../utils/status-handle";
+import { deleteComment } from "@/api/detail-net";
+import { getUserMessage } from "@/api/user-net";
+import loading from "@/utils/loading";
+import statusHandle from "@/utils/status-handle";
 import { mapState } from "vuex";
 export default {
   name: "",
@@ -37,6 +37,7 @@ export default {
   computed: {
     ...mapState({
       test: "test",
+      detailId: "detailId",
     }),
   },
   mounted() {
@@ -68,6 +69,11 @@ export default {
           if (!result.success) throw new Error();
           this.$toast.success("操作成功");
           this.isShowDeletePopup = false;
+          this.$bus.$emit("sync-msg", {
+            id: this.detailId,
+            count: -1 - this.commentItem.replyCount,
+          });
+          console.log(this.commentItem);
           if (this.commentItem.toReply) {
             this.$bus.$emit("fresh-reply-popup", this.commentItem.toComment);
           } else {

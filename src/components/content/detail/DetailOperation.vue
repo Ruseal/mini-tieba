@@ -9,7 +9,12 @@
       <p>QQ好友</p>
     </div>
     <div>
-      <img class="icon" :src="isLikeOperation" alt="" />
+      <img
+        @click="articleLikeHandle('sync-d')"
+        class="icon"
+        :src="isLikeOperation"
+        alt=""
+      />
       <p>{{ likeCountHandle }}</p>
     </div>
     <div>
@@ -20,27 +25,38 @@
 </template>
 
 <script>
+import mixins from "../../../mixins/mixin";
 export default {
   name: "",
   components: {},
   data() {
     return {};
   },
+  mixins: [mixins],
   props: {
-    operationData: {
+    articleItem: {
       type: Object,
       required: true,
     },
   },
   computed: {
     likeCountHandle() {
-      return this.operationData.likeCount ? this.operationData.likeCount : "赞";
+      return this.articleItem.likeCount ? this.articleItem.likeCount : "赞";
     },
     isLikeOperation() {
-      return this.operationData.isLike
-        ? require("../../../assets/img/common/love_active.png")
-        : require("../../../assets/img/common/love.png");
+      return this.articleItem.isLike
+        ? require("@/assets/img/common/love_active.png")
+        : require("@/assets/img/common/love.png");
     },
+  },
+  mounted() {
+    this.$bus.$on("sync-a", this.syncHandle);
+  },
+  destroyed() {
+    this.$bus.$off("sync-a", this.syncHandle);
+  },
+  methods: {
+ 
   },
 };
 </script>

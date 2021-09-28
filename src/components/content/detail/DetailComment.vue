@@ -9,11 +9,11 @@
         avatar: commentItem.author.avatar,
         member: commentItem.author.members,
         createTime: commentItem.createTime,
-        level: 3,
-        floor:floor
+        level: commentItem.author.level,
+        floor: floor,
       }"
       avatarType="round"
-      :label-type="[childLabelType,'time']"
+      :label-type="[childLabelType, 'time']"
       isMember
       isLevelCard
       isFloor
@@ -36,6 +36,9 @@
     </div>
     <div v-if="isHasImg">
       <img
+        @touchstart="start"
+        @touchend="end"
+        @click="onComment"
         v-for="(img, index) in commentItem.imageList"
         :key="index"
         v-lazy="img"
@@ -76,9 +79,9 @@
 </template>
 
 <script>
-import { like, unlike } from "../../../api/detail-net";
+import { like, unlike } from "@/api/detail-net";
 
-import statusHandle from "../../../utils/status-handle";
+import statusHandle from "@/utils/status-handle";
 import LeftArrow from "../../common/LeftArrow.vue";
 import UserLabel from "../../common/UserLabel.vue";
 export default {
@@ -121,12 +124,12 @@ export default {
         return "";
       },
     },
-    floor:{
-      type:Number,
-      default(){
-        return 0
-      }
-    }
+    floor: {
+      type: Number,
+      default() {
+        return 0;
+      },
+    },
   },
   computed: {
     replyCountHandle() {

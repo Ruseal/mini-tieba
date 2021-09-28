@@ -32,37 +32,26 @@
         <div class="send" :class="{ nomessage: message }" @touchend="send">
           发表
         </div>
-        <div class="textarea-tab">
-          <div class="icon-wrapper">
-            <img
-              @touchend="onImageIcon"
-              v-for="(item, index) in 3"
-              v-show="!textareaReply || index !== 1"
-              :key="index"
-              src="@/assets/img/detail/img-icon.png"
-              alt=""
-            />
-          </div>
-          <img
-            class="tab-right-claer"
-            src="@/assets/img/detail/backspace.png"
-            alt=""
-          />
-        </div>
+        <textarea-tab-bottom
+          @onimg="onImageIcon"
+          @clear-text="message = ''"
+          :isImg="!textareaReply"
+        />
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { publishedReply } from "../../../api/detail-net";
-import * as StoreConstant from "../../../constant/store-constant";
+import { publishedReply } from "@/api/detail-net";
+import * as StoreConstant from "@/constant/store-constant";
 import { mapState } from "vuex";
-import loading from "../../../utils/loading";
-import statusHandle from "../../../utils/status-handle";
+import loading from "@/utils/loading";
+import statusHandle from "@/utils/status-handle";
+import TextareaTabBottom from "../../common/TextareaTabBottom.vue";
 export default {
   name: "",
-  components: {},
+  components: { TextareaTabBottom },
   data() {
     return {
       isShowTextareaPopup: false,
@@ -112,7 +101,7 @@ export default {
         let commentId = this.sendReplyCommentId
           ? this.sendReplyCommentId
           : this.textareaReply.id;
-        const { status, service } = await publishedReply(
+        const { status } = await publishedReply(
           this.textareaReply.id,
           this.message,
           this.detailId,
@@ -123,7 +112,8 @@ export default {
         this.isShowTextareaPopup = false;
         this.message = "";
         this.$toast.success("回复成功");
-        this.$bus.$emit('fresh-reply-popup',this.textareaReply.id)
+        this.$bus.$emit("fresh-reply-popup", this.textareaReply.id);
+        this.$bus.$emit("sync-msg", { id: this.detailId, count: 1 });
       } catch (err) {
         this.$toast.fail("发表失败，请检查网络");
         result.message && this.$toast.fail(result.message);
@@ -185,7 +175,7 @@ export default {
 <style lang='less' scoped>
 .textarea-popup {
   .popup-wrapper {
-    border-top: 1px solid black;
+    border-top: 1px solid rgba(226, 224, 224, 0.7);
     position: relative;
     width: 100%;
     height: 100%;

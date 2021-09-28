@@ -37,6 +37,7 @@
           :before-read="beforeRead"
         />
       </div>
+      <textarea-tab-bottom />
     </van-popup>
   </div>
 </template>
@@ -44,13 +45,14 @@
 <script>
 import { mapState } from "vuex";
 import { publishedComment, uploadCommentPictrue } from "@/api/detail-net";
-import * as StoreConstant from "../../../constant/store-constant";
-import statusHandle from "../../../utils/status-handle";
+import * as StoreConstant from "@/constant/store-constant";
+import statusHandle from "@/utils/status-handle";
 
-import loading from "../../../utils/loading";
+import loading from "@/utils/loading";
+import TextareaTabBottom from "../../common/TextareaTabBottom.vue";
 export default {
   name: "",
-  components: {},
+  components: { TextareaTabBottom },
   data() {
     return {
       isShowImgTextareaPopup: false,
@@ -119,6 +121,7 @@ export default {
           this.message = "";
           this.$toast.success("发表评论成功");
           this.$bus.$emit("fresh-comment");
+          this.$bus.$emit("sync-msg", { id: this.detailId, count: 1 });
           return;
         }
         let data = new FormData();
@@ -136,6 +139,7 @@ export default {
         this.fileList = [];
         this.$toast.success("发表评论成功");
         this.$bus.$emit("fresh-comment");
+        this.$bus.$emit("sync-msg", { id: this.detailId, count: 1 });
       } catch (err) {
         this.$toast.fail("发表失败，请检查网络");
         result.message && this.$toast.fail(result.message);
@@ -173,7 +177,7 @@ export default {
     overflow-y: auto;
     left: 10px;
     right: 10px;
-    height: calc(100vh - 46px - 45px);
+    height: calc(100vh - 46px - 45px - 35px);
     .textarea-field {
       position: relative;
       padding: 10px;

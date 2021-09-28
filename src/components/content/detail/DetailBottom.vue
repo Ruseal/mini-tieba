@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import { start, unstart } from "../../../api/detail-net";
-import statusHandle from "../../../utils/status-handle";
+import { start, unstart } from "@/api/detail-net";
+import statusHandle from "@/utils/status-handle";
 import { mapState } from "vuex";
 export default {
   name: "",
@@ -63,6 +63,12 @@ export default {
         : require("@/assets/img/detail/start.png");
     },
   },
+  mounted() {
+    this.$bus.$on("sync-msg", this.syncMsg);
+  },
+  destroyed() {
+    this.$bus.$off("sync-msg", this.syncMsg);
+  },
   methods: {
     async startHandle() {
       let result = null;
@@ -88,9 +94,13 @@ export default {
     onDetailTextarea() {
       this.$bus.$emit("textarea-popup", null);
     },
-    onDetailBottomComment(){
-      this.$emit('to-top')
-    }
+    onDetailBottomComment() {
+      this.$emit("to-top");
+    },
+    syncMsg(event) {
+      if (this.detailData.id !== event.id) return;
+      this.detailData.commentCount += event.count;
+    },
   },
 };
 </script>

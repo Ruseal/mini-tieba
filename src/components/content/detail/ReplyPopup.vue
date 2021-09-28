@@ -33,7 +33,7 @@
         <div class="reply-count">
           {{ commentItem && commentItem.replyCount }}条回复
         </div>
-        <div v-if="!replyList.length" class="not-reply-list"></div>
+        <div v-if="!replyList.length" class="not-reply-list">此楼还没有回复哦~</div>
         <div v-else>
           <detail-comment
             v-for="item in replyList"
@@ -122,7 +122,7 @@ export default {
         this.$bus.$emit("fresh-reply-count", {
           count: this.replyList.length,
           commentid: event,
-        });
+        })
       } catch (err) {
         this.dataStatus = "error";
       }
@@ -161,7 +161,10 @@ export default {
     .not-reply-list {
       width: 100%;
       height: 200px;
-      background-color: rgb(88, 35, 35);
+      font-size: 13px;
+      text-align: center;
+      margin-top: 30px;
+      color: rgb(153, 153, 153);
     }
   }
   .reply-popup-bottom {

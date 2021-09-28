@@ -47,6 +47,12 @@ export default {
         return false;
       },
     },
+    scrollX: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
   },
   mounted() {
     this.initBScroll();
@@ -58,6 +64,7 @@ export default {
         probeType: this.probeType,
         pullUpLoad: this.pullUpLoad,
         bounce: this.bounce,
+        scrollX: this.scrollX,
       });
       this.bs &&
         this.bs.on("scroll", (position) => {
