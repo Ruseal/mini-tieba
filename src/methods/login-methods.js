@@ -1,6 +1,5 @@
 import * as LoginConstant from '@/constant/login-constant'
 import * as CommonConstant from '@/constant/commom-constant'
-import * as StoreConstant from '@/constant/store-constant'
 import { userLogin, userRegister } from '@/api/login-net'
 import loading from '@/utils/loading'
 

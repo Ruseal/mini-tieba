@@ -27,6 +27,7 @@ export default {
     state.commentMsg.unshift(payload)
   },
   [Constants.SAVE_CURRENT_DETAILID](state, payload) {
-    state.currentDetailAuthorId = payload
+    state.currentDetailAuthorId = payload.authorId
+    state.detailId = payload.detailId
   },
 }

@@ -70,8 +70,13 @@ const routes = [
   },
   {
     path: '/detail',
-    name: 'detail',
+    name:'detail',
     component: () => import('@/views/detail/Detail.vue')
+  },
+  {
+    path: '/tieba',
+    name: 'tieba',
+    component: () => import('../views/tieba/Tieba.vue')
   }
 ]
 

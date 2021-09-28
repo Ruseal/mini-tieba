@@ -7,6 +7,8 @@ module.exports = {
         'common': '@/common',
         'components': '@/components',
         'constant': '@/constant',
+        'mixins':'@/mixins',
+        'store':'@/store',
         'utils': '@/utils',
         'views': '@/views',
       }

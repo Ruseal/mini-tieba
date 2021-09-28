@@ -10,3 +10,17 @@ export function getArticleList(offset, size) {
     }
   })
 }
+
+export function articleLike(articleId) {
+  return request({
+    url: `/article/${articleId}/like`,
+    method: 'post'
+  })
+}
+
+export function articleUnLike(articleId) {
+  return request({
+    url: `/article/${articleId}/unlike`,
+    method: 'delete'
+  })
+}

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive exclude="detail">
+    <keep-alive exclude="detail,tieba,come">
       <router-view />
     </keep-alive>
   </div>
