@@ -5,8 +5,12 @@
       :nav-data="{ avatar: null, title: $route.params.tiebaName }"
       ><left-arrow slot="left" @click.native="onNavLeft"
     /></detail-nav>
-    <div v-if="dataStatus === 'loadding'">loading...</div>
-    <div v-else-if="dataStatus === 'error'">error</div>
+    <loading class="page" v-if="dataStatus === 'loadding'" />
+    <error
+      @fresh-page="freshPage"
+      class="page"
+      v-else-if="dataStatus === 'error'"
+    />
     <div v-else>
       <detail-tabs
         class="tabs-virtual"
@@ -35,7 +39,7 @@
                   : detailData.author.username,
                 members: detailData.author.members,
                 createTime: detailData.createTime,
-                level: 3,
+                level:detailData.author.level,
               }
             "
             isLevelCard
@@ -45,7 +49,7 @@
             isMenber
           />
         </detail-content>
-        <detail-operation :operation-data="detailData" />
+        <detail-operation :article-item="detailData" />
         <div class="user-label-tieba">
           <user-label
             :user-label="
@@ -61,12 +65,10 @@
           />
         </div>
         <detail-tabs class="detail-tabs" @on-tab="correctIndex" ref="tabsRef" />
-        <div v-show="!commentData.length" class="not-data">
-          {{ commentData.length }}
-        </div>
+        <div v-show="!commentData.length" class="not-data"><div>别让楼主寂寞太久</div></div>
         <div v-show="commentData.length">
           <detail-comment
-            v-for="(item ,index) in commentData"
+            v-for="(item, index) in commentData"
             :key="item.id"
             :comment-item="item"
             :floor="index"
@@ -91,8 +93,8 @@
 
 <script>
 import { getDetail, getComment } from "@/api/detail-net";
-import * as StoreConstant from "../../constant/store-constant";
-import debounce from "../../utils/debounce";
+import * as StoreConstant from "@/constant/store-constant";
+import debounce from "@/utils/debounce";
 import DetailNav from "@/components/content/detail/DetailNav.vue";
 import LeftArrow from "@/components/common/LeftArrow.vue";
 import Scroll from "@/components/common/Scroll.vue";
@@ -105,7 +107,9 @@ import DetailBottom from "@/components/content/detail/DetailBottom.vue";
 import ReplyPopup from "@/components/content/detail/ReplyPopup.vue";
 import TextareaPopup from "@/components/content/detail/TextareaPopup.vue";
 import TextareaImgPopup from "@/components/content/detail/TextareaImgPopup.vue";
-import RemoveCommentPopup from "../../components/content/detail/RemoveCommentPopup.vue";
+import RemoveCommentPopup from "@/components/content/detail/RemoveCommentPopup.vue";
+import Loading from "@/components/common/Loading.vue";
+import Error from "@/components/common/Error.vue";
 export default {
   name: "detail",
   components: {
@@ -122,6 +126,8 @@ export default {
     TextareaPopup,
     TextareaImgPopup,
     RemoveCommentPopup,
+    Loading,
+    Error,
   },
 
   data() {
@@ -142,7 +148,11 @@ export default {
       return this.commentLoadStatus ? "上拉加载更多评论" : "暂无更多评论";
     },
   },
+  created(){
+    console.log(this.$route);
+  },
   mounted() {
+    
     this.getDetailDataHandle();
     this.$bus.$on("fresh-comment", this.freshData);
   },
@@ -151,10 +161,10 @@ export default {
   },
   methods: {
     domHandle() {
-      this.$store.commit(
-        StoreConstant.SAVE_CURRENT_DETAILID,
-        this.detailData.author.id
-      );
+      this.$store.commit(StoreConstant.SAVE_CURRENT_DETAILID, {
+        authorId: this.detailData.author.id,
+        detailId: this.detailData.id,
+      });
       this.freshScroll = debounce(this.$refs.scrollOutRef.refresh, 200);
     },
     async getDetailDataHandle() {
@@ -164,6 +174,7 @@ export default {
         if (status !== 200 || isErr) throw new Error();
         this.dataStatus = "ok";
         this.detailData = data;
+        console.log(this.detailData);
         this.domHandle();
       } catch (err) {
         this.dataStatus = "error";
@@ -256,6 +267,13 @@ export default {
         1
       );
       this.$bus.$emit("reply-popup", { isShowPopup: false });
+      this.$nextTick(() => {
+        this.$refs.scrollOutRef.refresh();
+      });
+    },
+    freshPage() {
+      this.dataStatus = "loadding";
+      this.getDetailDataHandle();
     },
   },
 };
@@ -280,8 +298,17 @@ export default {
     }
     .not-data {
       width: 100%;
-      height: 300px;
-      background-color: rgb(173, 147, 147);
+      height: 400px;
+      background: url("../../assets/img/common/page-img/none.jpg") no-repeat;
+      background-size: cover;
+      background-position: 0 0;
+      div{
+        position: relative;
+        font-size: 11px;
+        color: rgb(160, 158, 158);
+        text-align: center;
+        top: 340px;
+      }
     }
     .not-more {
       font-size: 12px;
@@ -289,6 +316,9 @@ export default {
       line-height: 30px;
       background-color: #fff;
     }
+  }
+  .page {
+    height: 100%;
   }
 }
 </style>

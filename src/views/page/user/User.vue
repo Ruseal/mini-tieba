@@ -1,7 +1,7 @@
 <template>
   <div class="user">
-    <div v-if="dataStatus === 'loadding'">loading...</div>
-    <div v-else-if="dataStatus === 'error'">error</div>
+    <loading v-if="dataStatus === 'loadding'" />
+    <error @fresh-page="freshPage" v-else-if="dataStatus === 'error'" />
     <div v-else>
       <user-nav />
       <scroll class="scroll" :bounce="false">
@@ -29,6 +29,8 @@ import UserNumerical from "@/components/content/user/UserNumerical.vue";
 import UserCard from "@/components/content/user/UserCard.vue";
 import UserSwipe from "@/components/content/user/UserSwipe.vue";
 import UserCell from "@/components/content/user/UserCell.vue";
+import Loading from "../../../components/common/Loading.vue";
+import Error from "../../../components/common/Error.vue";
 
 export default {
   name: "user",
@@ -40,6 +42,8 @@ export default {
     UserCard,
     UserSwipe,
     UserCell,
+    Loading,
+    Error,
   },
   data() {
     return {
@@ -99,6 +103,10 @@ export default {
       } catch (err) {
         this.dataStatus = "error";
       }
+    },
+    freshPage() {
+      this.dataStatus = "loadding";
+      this.getUserMessageMethod();
     },
   },
 };

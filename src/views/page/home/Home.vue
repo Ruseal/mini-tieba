@@ -35,8 +35,11 @@
               click
               ref="scrollInRef"
             >
-              <div v-if="dataStatus === 'loadding'">loading...</div>
-              <div v-else-if="dataStatus === 'error'">error</div>
+              <loading v-if="dataStatus === 'loadding'" />
+              <error
+                @fresh-page="freshPage"
+                v-else-if="dataStatus === 'error'"
+              />
               <van-pull-refresh
                 v-else
                 class="pull-down-refresh"
@@ -93,13 +96,16 @@ import debounce from "../../../utils/debounce";
 import Scroll from "@/components/common/Scroll.vue";
 import HomeNav from "@/components/content/home/HomeNav.vue";
 import ArticleItem from "@/components/common/ArticleItem.vue";
+import Loading from "../../../components/common/Loading.vue";
+import Error from "../../../components/common/Error.vue";
 export default {
   name: "home",
   components: {
     Scroll,
     HomeNav,
     ArticleItem,
-    imageList: [],
+    Loading,
+    Error,
   },
   data() {
     return {
@@ -121,6 +127,11 @@ export default {
     this.createDomHandle();
     //页面渲染之后请求数据
     this.getArticleListMethod();
+  },
+  activated() {
+    this.$nextTick(() => {
+      this.$refs.scrollInRef[0].refresh();
+    });
   },
   methods: {
     //页面渲染后另内嵌套滚动禁用
@@ -189,6 +200,9 @@ export default {
         });
       } catch (err) {
         this.dataStatus = "error";
+        this.$nextTick(() => {
+          this.$refs.scrollInRef[0].refresh();
+        });
       }
     },
     scrollPosition(position) {
@@ -244,6 +258,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.scrollInRef[0].refresh();
       });
+    },
+    freshPage() {
+      this.dataStatus = "loadding";
+      this.getArticleListMethod();
     },
   },
 };
