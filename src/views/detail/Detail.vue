@@ -39,7 +39,7 @@
                   : detailData.author.username,
                 members: detailData.author.members,
                 createTime: detailData.createTime,
-                level:detailData.author.level,
+                level: detailData.author.level ? detailData.author.level : 1,
               }
             "
             isLevelCard
@@ -52,9 +52,10 @@
         <detail-operation :article-item="detailData" />
         <div class="user-label-tieba">
           <user-label
+            v-if="$route.params.from !== 'tieba'"
             :user-label="
               detailData.tieba && {
-                avatar: null,
+                avatar: detailData.tieba.avatar,
                 title: detailData.tieba.tiebaName,
                 focusCount: detailData.tieba.focusCount,
                 contentCount: detailData.tieba.contentCount,
@@ -65,7 +66,9 @@
           />
         </div>
         <detail-tabs class="detail-tabs" @on-tab="correctIndex" ref="tabsRef" />
-        <div v-show="!commentData.length" class="not-data"><div>别让楼主寂寞太久</div></div>
+        <div v-show="!commentData.length" class="not-data">
+          <div>别让楼主寂寞太久</div>
+        </div>
         <div v-show="commentData.length">
           <detail-comment
             v-for="(item, index) in commentData"
@@ -93,6 +96,7 @@
 
 <script>
 import { getDetail, getComment } from "@/api/detail-net";
+import { userRecordTieba } from "@/api/user-net";
 import * as StoreConstant from "@/constant/store-constant";
 import debounce from "@/utils/debounce";
 import DetailNav from "@/components/content/detail/DetailNav.vue";
@@ -148,11 +152,7 @@ export default {
       return this.commentLoadStatus ? "上拉加载更多评论" : "暂无更多评论";
     },
   },
-  created(){
-    console.log(this.$route);
-  },
   mounted() {
-    
     this.getDetailDataHandle();
     this.$bus.$on("fresh-comment", this.freshData);
   },
@@ -166,6 +166,7 @@ export default {
         detailId: this.detailData.id,
       });
       this.freshScroll = debounce(this.$refs.scrollOutRef.refresh, 200);
+      this.userRecordTiebaMethod();
     },
     async getDetailDataHandle() {
       try {
@@ -174,7 +175,6 @@ export default {
         if (status !== 200 || isErr) throw new Error();
         this.dataStatus = "ok";
         this.detailData = data;
-        console.log(this.detailData);
         this.domHandle();
       } catch (err) {
         this.dataStatus = "error";
@@ -208,9 +208,17 @@ export default {
           }
         });
       } catch (err) {
-        console.log(err);
         this.dataStatus = "error";
         return "err";
+      }
+    },
+    async userRecordTiebaMethod() {
+      if (!this.detailData.yourUserId) return;
+      try {
+        const { status } = await userRecordTieba(this.detailData.tieba.id);
+        if (status !== 200) throw new Error();
+      } catch (error) {
+        this.$toast.fail("网络不稳定");
       }
     },
     freshData() {
@@ -302,7 +310,7 @@ export default {
       background: url("../../assets/img/common/page-img/none.jpg") no-repeat;
       background-size: cover;
       background-position: 0 0;
-      div{
+      div {
         position: relative;
         font-size: 11px;
         color: rgb(160, 158, 158);

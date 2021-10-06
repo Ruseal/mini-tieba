@@ -8,7 +8,7 @@
       ref="scrollOutRef"
     >
       <div class="scroll-out-wrapper">
-        <home-nav ref="homeNavRef" />
+        <home-nav @send-article="sendArticle" ref="homeNavRef" />
         <div v-show="isShowPullDownFreshPrompt" class="pull-refresh-success">
           {{
             isArticleHasValue
@@ -86,18 +86,20 @@
         </van-tabs>
       </div>
     </scroll>
+    <add-article-popup v-if="dataStatus === 'ok'" ref="addArticleRef" />
   </div>
 </template>
 
 <script>
 import { getArticleList } from "@/api/home-net";
-
+import { isLoginMethod } from "../../../methods/common-methods";
 import debounce from "../../../utils/debounce";
 import Scroll from "@/components/common/Scroll.vue";
 import HomeNav from "@/components/content/home/HomeNav.vue";
 import ArticleItem from "@/components/common/ArticleItem.vue";
 import Loading from "../../../components/common/Loading.vue";
 import Error from "../../../components/common/Error.vue";
+import AddArticlePopup from "../../../components/common/AddArticlePopup.vue";
 export default {
   name: "home",
   components: {
@@ -106,6 +108,7 @@ export default {
     ArticleItem,
     Loading,
     Error,
+    AddArticlePopup,
   },
   data() {
     return {
@@ -262,6 +265,10 @@ export default {
     freshPage() {
       this.dataStatus = "loadding";
       this.getArticleListMethod();
+    },
+    async sendArticle() {
+      if (!(await isLoginMethod(this))) return;
+      this.$refs.addArticleRef.isShowAddArticlePopup = true;
     },
   },
 };

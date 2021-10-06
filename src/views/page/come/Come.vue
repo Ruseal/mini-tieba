@@ -17,18 +17,20 @@
         <error v-if="statusData === 'error'" />
         <tieba-error v-if="statusData === 'not-auth'" />
         <scroll v-else class="scroll" click>
-          <card-list>
+          <card-list ref="cardListRef">
             <card-list-item
-              @click.native="toTieba"
+              @fresh-scroll="freshColScroll"
+              @click.native="toTieba(item.id)"
               class="card-list-item"
-              v-for="index in 10"
-              :key="index"
+              :tieba-card-item="item"
+              v-for="item in recordList"
+              :key="item.id"
             />
           </card-list>
           <square />
           <div class="come-tabs">
             <div>关注的吧</div>
-            <div>等级排序</div>
+            <div @click="$toast('暂只支持等级排序')">等级排序</div>
           </div>
           <user-label
             @click.native="toTieba(item.id)"
@@ -37,6 +39,7 @@
             :key="index"
             :labelType="['article']"
             :userLabel="{
+              avatar: item.tieba.avatar,
               title: item.tieba.tiebaName,
               level: item.level,
               introduction: item.tieba.introduction
@@ -56,6 +59,8 @@
 
 <script>
 import { getAllTieba } from "../../../api/tieba-net";
+import { getRecordList } from "../../../api/user-net";
+import debounce from "../../../utils/debounce";
 import Error from "../../../components/common/Error.vue";
 import Loading from "../../../components/common/Loading.vue";
 import Scroll from "../../../components/common/Scroll.vue";
@@ -85,10 +90,31 @@ export default {
       active: 0,
       statusData: "loading",
       allTiebaList: [],
+      recordList: [
+        {
+          id: 1,
+          avatar: require("../../../assets/img/common/user-avatar/c.jpg"),
+          tiebaName: "寻找贴吧",
+          notData: true,
+        },
+      ],
+      freshScroll: null,
+      controlUpdata: 0,
     };
   },
   created() {
     this.getAllTiebaMethod();
+  },
+  activated() {
+    this.getRecordListMethod();
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.freshScroll = debounce(
+        this.$refs.cardListRef[0].colScrollRef.refresh,
+        100
+      );
+    });
   },
   methods: {
     async getAllTiebaMethod() {
@@ -100,20 +126,36 @@ export default {
         }
         if (status !== 200) throw new Error();
         this.statusData = "ok";
+        data.sort((obj1, obj2) => {
+          return obj2.level - obj1.level;
+        });
         this.allTiebaList = data;
+        this.getRecordListMethod();
       } catch (error) {
         this.statusData = "error";
         this, $toast.fail("网络错误");
       }
     },
+    async getRecordListMethod() {
+      try {
+        const { status, data } = await getRecordList();
+        if (status !== 200) throw new Error();
+        if (!data.length) return;
+        this.recordList = data;
+      } catch (error) {
+        this.$toast.fail("网络不稳定，获取访问贴吧记录失败");
+      }
+    },
     toTieba(tiebaId) {
       this.$router.push({
         name: "tieba",
-        query:{
-           tid: tiebaId,
-        }
-       
+        query: {
+          tid: tiebaId,
+        },
       });
+    },
+    freshColScroll() {
+      this.freshScroll();
     },
   },
 };
