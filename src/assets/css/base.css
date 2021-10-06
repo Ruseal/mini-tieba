@@ -5,7 +5,6 @@ body {
   min-width: 300px;
   min-height: 400px;
   user-select: none;
-  /* overflow: hidden; */
 }
 
 ::-webkit-scrollbar {

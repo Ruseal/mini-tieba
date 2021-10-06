@@ -8,6 +8,7 @@ module.exports = {
         'components': '@/components',
         'constant': '@/constant',
         'mixins':'@/mixins',
+        'methods':'@/methods',
         'store':'@/store',
         'utils': '@/utils',
         'views': '@/views',

@@ -25,6 +25,9 @@ const routes = [
       {
         path: 'come',
         name: 'come',
+        meta: {
+          keepAlive: false
+        },
         component: () => import('@/views/page/come/Come.vue'),
       },
       {
@@ -70,13 +73,31 @@ const routes = [
   },
   {
     path: '/detail',
-    name:'detail',
+    name: 'detail',
     component: () => import('@/views/detail/Detail.vue')
   },
   {
     path: '/tieba',
     name: 'tieba',
-    component: () => import('../views/tieba/Tieba.vue')
+    meta: {
+      keepAlive: false
+    },
+    component: () => import('@/views/tieba/Tieba.vue')
+  },
+  {
+    path: '/create',
+    name: 'create-tieba',
+    component: () => import('@/views/tieba/CreateTieba.vue')
+  },
+  {
+    path: '/auth',
+    name: 'apply-auth',
+    component: () => import('@/views/tieba/ApplyAuth.vue')
+  },
+  {
+    path: '/tieba-msg',
+    name: 'tieba-msg',
+    component: () => import('../views/tieba/TiebaMsg.vue')
   }
 ]
 
