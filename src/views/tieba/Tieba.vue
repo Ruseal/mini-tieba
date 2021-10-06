@@ -12,8 +12,8 @@
       <div class="scroll-out-wrapper">
         <div class="top" ref="topRef">
           <tieba-nav />
-          <tieba-card :tieba-msg="tiebaDeatil" />
-          <placed-top :tieba-msg="tiebaDeatil"/>
+          <tieba-card @onavatar="onAvatar" :tieba-msg="tiebaDeatil" />
+          <placed-top :tieba-msg="tiebaDeatil" />
         </div>
         <tieba-tabs />
         <scroll
@@ -31,6 +31,7 @@
             :tieba-msg="tiebaDeatil"
             @image-load="fresh"
             user-label-type="user"
+            label-right-child=""
           />
           <div class="pullup-style">
             {{ isArticleHasValue ? "正在加载..." : "没有更多了" }}
@@ -38,20 +39,35 @@
         </scroll>
       </div>
     </scroll>
+    <div v-if="statusData === 'ok'" @click="onAddArticle" class="add-article">
+      +
+    </div>
+    <add-article-popup
+      @unshift-article="unshiftArticle"
+      :tieba-msg="tiebaDeatil"
+      ref="addArticleRef"
+    />
   </div>
 </template>
 
 <script>
-import { getTiebaDeatil, getArticleList } from "../../api/tieba-net";
-import debounce from "../../utils/debounce";
-import ArticleItem from "../../components/common/ArticleItem.vue";
-import Error from "../../components/common/Error.vue";
-import Loading from "../../components/common/Loading.vue";
-import Scroll from "../../components/common/Scroll.vue";
-import PlacedTop from "../../components/content/tieba/PlacedTop.vue";
-import TiebaCard from "../../components/content/tieba/TiebaCard.vue";
-import TiebaNav from "../../components/content/tieba/TiebaNav.vue";
-import TiebaTabs from "../../components/content/tieba/TiebaTabs.vue";
+import {
+  getTiebaDeatil,
+  getArticleList,
+  getSingleArticle,
+} from "@/api/tieba-net";
+import { userRecordTieba } from "@/api/user-net";
+import { isLoginMethod } from "@/methods/common-methods";
+import debounce from "@/utils/debounce";
+import ArticleItem from "@/components/common/ArticleItem.vue";
+import Error from "@/components/common/Error.vue";
+import Loading from "@/components/common/Loading.vue";
+import Scroll from "@/components/common/Scroll.vue";
+import PlacedTop from "@/components/content/tieba/PlacedTop.vue";
+import TiebaCard from "@/components/content/tieba/TiebaCard.vue";
+import TiebaNav from "@/components/content/tieba/TiebaNav.vue";
+import TiebaTabs from "@/components/content/tieba/TiebaTabs.vue";
+import AddArticlePopup from "@/components/common/AddArticlePopup.vue";
 export default {
   name: "tieba",
   components: {
@@ -63,6 +79,7 @@ export default {
     Loading,
     Error,
     ArticleItem,
+    AddArticlePopup,
   },
   data() {
     return {
@@ -88,7 +105,7 @@ export default {
         if (status !== 200) throw new Error();
         this.statusData = "ok";
         this.tiebaDeatil = data;
-        console.log(data);
+        this.userRecordTiebaMethod();
       } catch (error) {
         this.statusData = "error";
       }
@@ -101,13 +118,13 @@ export default {
           10
         );
         if (status !== 200) throw new Error();
+
         if (!data.length) {
           this.isArticleHasValue = false;
           this.$refs.scrollInRef.finishPullUp();
           return;
         }
         this.articleList.push(...data);
-        console.log(data);
         this.offset += 10;
         this.$nextTick(() => {
           this.$refs.scrollInRef.refresh();
@@ -115,6 +132,32 @@ export default {
         });
       } catch (error) {
         this.statusData = "error";
+      }
+    },
+    async unshiftArticle(articleId) {
+      try {
+        const { data, status } = await getSingleArticle(articleId);
+        if (status !== 200) throw new Error();
+        this.offset += 1;
+        this.articleList.unshift(data);
+        this.$nextTick(() => {
+          this.$refs.scrollInRef.refresh();
+        });
+      } catch (error) {
+        this.$toast.fail("网络错误");
+      }
+    },
+    async onAddArticle() {
+      if (!(await isLoginMethod(this))) return;
+      this.$refs.addArticleRef.isShowAddArticlePopup = true;
+    },
+    async userRecordTiebaMethod() {
+      if (!this.tiebaDeatil.yourUserId) return;
+      try {
+        const { status } = await userRecordTieba(this.tiebaDeatil.id);
+        if (status !== 200) throw new Error();
+      } catch (error) {
+        this.$toast.fail("网络不稳定");
       }
     },
     initDom() {
@@ -140,12 +183,21 @@ export default {
         this.getArticleListMethod();
       }, 1000); //上拉加载动画过程延迟时间
     },
+    onAvatar() {
+      this.$router.push({
+        name: "tieba-msg",
+        query: {
+          msg: this.tiebaDeatil,
+        },
+      });
+    },
   },
 };
 </script>
 <style lang='less' scoped>
 .tieba {
   .scroll-out {
+    position: relative;
     width: 100vw;
     height: 100vh;
     .scroll-out-wrapper {
@@ -172,6 +224,19 @@ export default {
         }
       }
     }
+  }
+  .add-article {
+    position: fixed;
+    bottom: 40px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+    font-size: 30px;
+    color: white;
+    border-radius: 23px;
+    text-align: center;
+    line-height: 45px;
+    background-color: rgb(78, 78, 78);
   }
 }
 </style>
