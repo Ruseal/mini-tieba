@@ -24,11 +24,22 @@ export default {
       required: true,
     },
   },
-  methods:{
-    onTop(){
-      this.$toast('暂不支持查看置顶贴子详情')
-    }
-  }
+  methods: {
+    onTop() {
+      if (this.tiebaMsg.maxAuth) {
+        this.$toast("暂不支持查看置顶贴子详情");
+        return;
+      }
+      this.$router.push({
+        name: "apply-auth",
+        query: {
+          level: this.tiebaMsg.cardMsg.level,
+          tiebaId: this.tiebaMsg.id,
+          author:this.tiebaMsg.maxAuth
+        },
+      });
+    },
+  },
 };
 </script>
 <style lang='less' scoped>

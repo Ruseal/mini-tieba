@@ -2,9 +2,10 @@
   <div class="tieba-card" v-if="Object.keys(tiebaMsg).length">
     <div class="left">
       <img
+        @click="onTiebaAvatar"
         :src="
           tiebaMsg.avatar
-            ? require('../../../assets/img/common/user-avatar/b.jpg')
+            ? tiebaMsg.avatar
             : require('../../../assets/img/common/user-avatar/b.jpg')
         "
         alt=""
@@ -13,7 +14,9 @@
         <h1>{{ tiebaMsg.tiebaName }}吧</h1>
         <div v-show="tiebaMsg.cardMsg.isFocus" class="level">
           <div class="count">
-            LV{{ tiebaMsg.cardMsg.level }}&nbsp;&nbsp;会员双倍经验
+            LV{{
+              tiebaMsg.cardMsg.level ? tiebaMsg.cardMsg.level : 1
+            }}&nbsp;&nbsp;会员双倍经验
           </div>
           <div class="exp" ref="expWrapperRef"><div ref="expRef"></div></div>
         </div>
@@ -43,18 +46,26 @@
         <div class="card-bottom" v-else>立即申请吧主</div>
       </div>
     </div>
-    <div v-show="!isSigned()" class="right" @click="onfocus">
-      {{ tiebaMsg.cardMsg && tiebaMsg.cardMsg.isFocus ? "签到" : "关注" }}
+    <div
+      v-if="!tiebaMsg.cardMsg || !tiebaMsg.cardMsg.isFocus"
+      class="right"
+      @click="onfocus"
+    >
+      关注
     </div>
-    <div v-show="isSigned()" class="right" @click="onSigned">已签到</div>
+    <div v-else class="right" @click="onSigned">
+      {{ isSigned() ? "已签到" : "签到" }}
+    </div>
   </div>
 </template>
 
 <script>
 import { updateSign } from "../../../api/tieba-net";
+import mixins from "@/mixins/mixin";
 export default {
   name: "",
   components: {},
+  mixins: [mixins],
   data() {
     return {};
   },
@@ -93,30 +104,37 @@ export default {
     domHandle() {
       this.$refs.expRef.style.cssText = `width:${this.tiebaMsg.cardMsg.exp}%;transition: 0.5s;`;
     },
-    async onfocus() {
+    async onSigned() {
+      if (!this.isSigned()) {
+        try {
+          const { status } = await updateSign(
+            this.tiebaMsg.id,
+            (this.tiebaMsg.cardMsg.level ? this.tiebaMsg.cardMsg.level : 1) + 1,
+            this.tiebaMsg.cardMsg.exp + 3
+          );
+          if (status !== 200) throw new Error();
+          this.$toast.success("经验+3");
+          localStorage.setItem(
+            "sign-time" + this.tiebaMsg.id,
+            new Date().getTime()
+          );
+          this.isSigned();
+          this.tiebaMsg.cardMsg.level += 1;
+          this.tiebaMsg.cardMsg.level -= 1;
+          this.annimount();
+        } catch (error) {
+          this.$toast.fail("网络错误，签到失败!");
+        }
+        return;
+      }
+      this.$toast("24小时后可再次签到");
+    },
+    onfocus() {
       if (!this.tiebaMsg.yourUserId) {
         this.$router.replace({ name: "login-user" });
         return;
       }
-      try {
-        const { status } = await updateSign(
-          this.tiebaMsg.id,
-          this.tiebaMsg.cardMsg.level + 1,
-          this.tiebaMsg.cardMsg.exp + 3
-        );
-        if (status !== 200) throw new Error();
-        this.$toast.success("经验+3");
-        localStorage.setItem(
-          "sign-time" + this.tiebaMsg.id,
-          new Date().getTime()
-        );
-        this.isSigned();
-        this.tiebaMsg.cardMsg.level += 1;
-        this.tiebaMsg.cardMsg.level -= 1;
-        this.annimount();
-      } catch (error) {
-        this.$toast.fail("网络错误，签到失败!");
-      }
+      this.focusTiebaMethod();
     },
     annimount() {
       let expDom = this.$refs.expRef;
@@ -124,7 +142,9 @@ export default {
       setTimeout(() => {
         expDom.style.cssText = `width:${0}%;transition: 0s;`;
         setTimeout(() => {
-          this.tiebaMsg.cardMsg.level += 1;
+          this.tiebaMsg.cardMsg.level
+            ? (this.tiebaMsg.cardMsg.level += 1)
+            : (this.tiebaMsg.cardMsg.level = 2);
           this.tiebaMsg.cardMsg.exp += 3;
           expDom.style.cssText = `width:${
             (this.tiebaMsg.cardMsg.exp /
@@ -134,8 +154,8 @@ export default {
         }, 50);
       }, 2000);
     },
-    onSigned() {
-      this.$toast("24小时后可再次签到");
+    onTiebaAvatar() {
+      this.$emit("onavatar");
     },
   },
 };

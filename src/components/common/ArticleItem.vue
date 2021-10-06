@@ -4,7 +4,7 @@
       v-if="userLabelType === 'tieba'"
       @on-right="onUserLabelRight"
       :user-label="{
-        avatar: null,
+        avatar: articleItem.tieba.tiebaAvatarUrl,
         title: articleItem.tieba.tiebaName,
         focusCount: articleItem.tieba.focusCount,
         contentCount: articleItem.tieba.contentCount,
@@ -22,9 +22,9 @@
           : articleItem.author.username,
         createTime: articleItem.createTime,
         authId: articleItem.author.id,
-        tiebaMaxAuthId: tiebaMsg.maxAuth.id,
+        tiebaMaxAuthId: tiebaMsg.maxAuth && tiebaMsg.maxAuth.id,
       }"
-      label-right="exit"
+      :label-right="labelRightChild"
       :label-type="['time']"
       isMaxAuth
     />
@@ -145,6 +145,12 @@ export default {
         return "tieba";
       },
     },
+    labelRightChild: {
+      type: String,
+      default() {
+        return "";
+      },
+    },
   },
   methods: {
     createDomHandle() {
@@ -178,6 +184,7 @@ export default {
           params: {
             id: this.articleItem.id,
             tiebaName: this.articleItem.tieba.tiebaName,
+            from: this.$route.name,
           },
         });
       }

@@ -11,7 +11,7 @@
         <div class="label">找优质好吧</div>
       </div>
     </div>
-    <div class="create">
+    <div class="create" @click="createTieba">
       <img src="../../../assets/img/come/create.png" alt="" />
       <div>创建自己的吧</div>
     </div>
@@ -26,6 +26,13 @@ export default {
   data() {
     return {};
   },
+  methods:{
+    createTieba(){
+      this.$router.push({
+        name:'create-tieba'
+      })
+    }
+  }
 };
 </script>
 <style lang='less' scoped>

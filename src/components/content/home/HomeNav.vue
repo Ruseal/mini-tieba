@@ -12,7 +12,7 @@
       </div>
       <div slot="right" class="nav-right">
         <img src="@/assets/img/home/redpackage.png" alt="" />
-        <img src="@/assets/img/home/release.png" alt="" />
+        <img @click="$emit('send-article')" src="@/assets/img/home/release.png" alt="" />
       </div>
     </van-nav-bar>
   </div>
@@ -27,6 +27,7 @@ export default {
       value: "大家都在搜:A15处理器",
     };
   },
+
 };
 </script>
 <style lang='less' scoped>

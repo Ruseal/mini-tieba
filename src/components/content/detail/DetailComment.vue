@@ -9,7 +9,7 @@
         avatar: commentItem.author.avatar,
         member: commentItem.author.members,
         createTime: commentItem.createTime,
-        level: commentItem.author.level,
+        level: commentItem.author.level ? commentItem.author.level : 1,
         floor: floor,
       }"
       avatarType="round"

@@ -2,16 +2,24 @@
   <div class="card-list-item">
     <div class="top" ref="colorRef"></div>
     <div class="bottom">
-      <div>阿斯蒂芬</div>
-      <div>关注&nbsp;&nbsp;4595</div>
+      <div>{{ tiebaCardItem.tiebaName }}</div>
+      <div v-if="!tiebaCardItem.notData">关注&nbsp;&nbsp;{{ tiebaCardItem.focusCount }}</div>
+      <div v-else>您还未留下贴吧足迹</div>
     </div>
-    <img src="../../../assets/img/common/user-avatar/c.jpg" class="avatar" />
+    <img
+      :src="
+        tiebaCardItem.avatar
+          ? tiebaCardItem.avatar
+          : require('@/assets/img/common/user-avatar/c.jpg')
+      "
+      class="avatar"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: "",
+  name: "card-list-item",
   components: {},
   data() {
     return {
@@ -26,11 +34,19 @@ export default {
       ],
     };
   },
+  props: {
+    tiebaCardItem: {
+      type: Object,
+      required: true,
+    },
+  },
   mounted() {
     this.$refs.colorRef.style.cssText = `background-color:${
       this.color[~~(Math.random() * 7)]
     } ;`;
-    console.log();
+    this.$nextTick(()=>{
+      this.$emit('fresh-scroll')
+    })
   },
 };
 </script>

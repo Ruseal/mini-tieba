@@ -1,7 +1,7 @@
 <template>
   <div class="card-list">
     <div class="card-title">最近逛的吧</div>
-    <scroll class="scroll" ref="scrollRef" scrollX>
+    <scroll class="scroll" ref="colScrollRef" scrollX>
       <slot></slot>
     </scroll>
   </div>
@@ -13,9 +13,13 @@ export default {
   name: "",
   components: { Scroll },
   data() {
-    return {};
+    return {
+      colScrollRef: null,
+    };
   },
-  mounted() {},
+  mounted() {
+    this.colScrollRef = this.$refs.colScrollRef;
+  },
 };
 </script>
 <style lang='less' scoped>
