@@ -27,3 +27,10 @@ export function isLogin() {
     method: 'get',
   })
 }
+
+export function getUserDetail(userId) {
+  return request({
+    url: `/user/${userId}/detail`,
+    method: 'get',
+  })
+}

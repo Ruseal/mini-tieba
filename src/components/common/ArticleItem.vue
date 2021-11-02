@@ -2,19 +2,20 @@
   <div class="article-item">
     <user-label
       v-if="userLabelType === 'tieba'"
+      @on-label="toTieba"
       @on-right="onUserLabelRight"
       :user-label="{
         avatar: articleItem.tieba.tiebaAvatarUrl,
         title: articleItem.tieba.tiebaName,
         focusCount: articleItem.tieba.focusCount,
         contentCount: articleItem.tieba.contentCount,
+        isTieba: true,
       }"
       label-right="exit"
       :label-type="['count']"
     />
     <user-label
       v-if="userLabelType === 'user'"
-      @on-right="onUserLabelRight"
       :user-label="{
         avatar: articleItem.author.avatar,
         title: articleItem.author.nickname
@@ -137,7 +138,9 @@ export default {
     },
     tiebaMsg: {
       type: Object,
-      require: true,
+      default() {
+        return {};
+      },
     },
     userLabelType: {
       type: String,
@@ -190,6 +193,14 @@ export default {
       }
       this.move.x = 0;
       this.move.y = 0;
+    },
+    toTieba() {
+      this.$router.push({
+        name: "tieba",
+        query: {
+          tid: this.articleItem.tieba.id,
+        },
+      });
     },
   },
 };

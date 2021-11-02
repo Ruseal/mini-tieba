@@ -4,8 +4,11 @@
     <error @fresh-page="freshPage" v-else-if="dataStatus === 'error'" />
     <div v-else>
       <user-nav />
-      <scroll class="scroll" :bounce="false">
-        <user-message :user-message="userMessage" />
+      <scroll class="scroll" click :bounce="false">
+        <user-message
+          :user-message="userMessage"
+          @click.native="toUserDetail"
+        />
         <user-numerical :numerical="userMessage.numerical" />
         <user-card />
         <user-swipe />
@@ -107,6 +110,15 @@ export default {
     freshPage() {
       this.dataStatus = "loadding";
       this.getUserMessageMethod();
+    },
+    toUserDetail() {
+      this.$router.push({
+        name: "user-detail",
+        params: {
+          selfUser: true,
+          userId: this.userMessage.id,
+        },
+      });
     },
   },
 };

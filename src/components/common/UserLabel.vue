@@ -1,6 +1,7 @@
 <template>
   <div class="user-label">
     <img
+      @click="onUserlabel"
       :style="avatarStyle"
       class="avatar"
       :src="
@@ -10,7 +11,7 @@
       "
       alt=""
     />
-    <div class="center">
+    <div class="center" @click="onUserlabel">
       <div class="title">
         <img
           v-if="isMember"
@@ -32,7 +33,6 @@
           v-show="userLabel.authId === userLabel.tiebaMaxAuthId"
           class="floor-max-author"
         >
-        
           吧主
         </div>
         <img v-if="isLevelCard" class="level-card" :src="levelCardImg" alt="" />
@@ -200,9 +200,24 @@ export default {
       this.$emit("on-right");
     },
     onRightButton() {
-      this.$refs.rightButtonRef.style.cssText =
-        "background-color: #e3e5e7;font-size:0.3rem";
-      this.$refs.rightButtonRef.innerText = "已关注";
+      // if(this.$refs.rightButtonRef.innerText==="关注"){
+      // }
+      // this.$refs.rightButtonRef.style.cssText =
+      //   "background-color: #e3e5e7;font-size:0.3rem";
+      // this.$refs.rightButtonRef.innerText = "已关注";
+    },
+    onUserlabel() {
+      if (this.userLabel.isTieba) {
+        this.$emit("on-label");
+        return;
+      } else {
+        this.$router.replace({
+          name: "user-detail",
+          params: {
+            userId: this.userLabel.authId,
+          },
+        });
+      }
     },
   },
 };

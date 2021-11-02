@@ -97,3 +97,10 @@ export function deleteComment(commentId) {
     method: 'delete'
   })
 }
+
+export function deleteArticle(articleId) {
+  return request({
+    url: `/article/${articleId}`,
+    method: 'delete'
+  })
+}

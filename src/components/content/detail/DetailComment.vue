@@ -2,7 +2,7 @@
   <div class="detail-comment">
     <user-label
       :user-label="{
-        id: commentItem.author.id,
+        authId: commentItem.author.id,
         title: commentItem.author.nickname
           ? commentItem.author.nickname
           : commentItem.author.username,

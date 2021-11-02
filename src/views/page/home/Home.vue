@@ -73,7 +73,7 @@
                   :key="item.id"
                   :article-item="item"
                   @image-load="imageLoad"
-                  @remove-article="removeArticle"
+                  @remove-article="onRemoveArticle"
                 />
                 <!-- ------------------------------------------------------------------ -->
                 <div class="pullup-style">
@@ -130,6 +130,7 @@ export default {
     this.createDomHandle();
     //页面渲染之后请求数据
     this.getArticleListMethod();
+    this.$bus.$on("remove-detail", this.removeArticle);
   },
   activated() {
     this.$nextTick(() => {
@@ -248,6 +249,16 @@ export default {
       this.freshScroll();
     },
     //移除贴子操作
+    onRemoveArticle(articleId) {
+      this.$dialog
+        .confirm({
+          message: "对该条贴子不感兴趣?",
+        })
+        .then(() => {
+          this.removeArticle(articleId);
+        })
+        .catch(() => {});
+    },
     removeArticle(articleId) {
       this.articleList.splice(
         this.articleList.indexOf(

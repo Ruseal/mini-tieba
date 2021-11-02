@@ -98,6 +98,21 @@ const routes = [
     path: '/tieba-msg',
     name: 'tieba-msg',
     component: () => import('../views/tieba/TiebaMsg.vue')
+  },
+  {
+    path:'/reply',
+    name:'reply',
+    component:()=>import('../views/page/notice/NoticeReply.vue')
+  },
+  {
+    path:'/outher',
+    name:'outher',
+    component:()=>import('../views/page/notice/NoticeOuther.vue')
+  },
+  {
+    path:'/user-detail',
+    name:'user-detail',
+    component:()=>import('../views/page/user/UserDetail.vue')
   }
 ]
 

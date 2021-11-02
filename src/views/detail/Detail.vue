@@ -1,10 +1,16 @@
 <template>
   <div class="deatil">
     <detail-nav
+      @on-nav-img="toTieba"
+      @show-nav-slide="showNavSlide"
       ref="navRef"
       :nav-data="{ avatar: null, title: $route.params.tiebaName }"
       ><left-arrow slot="left" @click.native="onNavLeft"
     /></detail-nav>
+    <div v-if="dataStatus === 'ok'" v-show="isShowNavSlide" class="nav-popup">
+      <div>举报</div>
+      <div v-show="isShowNavDelete" @click="onDelete">删除</div>
+    </div>
     <loading class="page" v-if="dataStatus === 'loadding'" />
     <error
       @fresh-page="freshPage"
@@ -33,6 +39,7 @@
             slot="user-label"
             :user-label="
               detailData.author && {
+                authId: detailData.author.id,
                 avatar: detailData.author.avatar,
                 title: detailData.author.nickname
                   ? detailData.author.nickname
@@ -45,13 +52,19 @@
             isLevelCard
             avatar-type="round"
             :label-type="['time']"
-            label-right="focus"
+            :label-right="
+              detailData.author &&
+              detailData.author.id === detailData.yourUserId
+                ? ''
+                : 'focus'
+            "
             isMenber
           />
         </detail-content>
         <detail-operation :article-item="detailData" />
         <div class="user-label-tieba">
           <user-label
+            @click.native="toTieba"
             v-if="$route.params.from !== 'tieba'"
             :user-label="
               detailData.tieba && {
@@ -95,8 +108,8 @@
 </template>
 
 <script>
-import { getDetail, getComment } from "@/api/detail-net";
-import { userRecordTieba } from "@/api/user-net";
+import { getDetail, getComment, deleteArticle } from "@/api/detail-net";
+import { userRecordTieba, getUserMessage } from "@/api/user-net";
 import * as StoreConstant from "@/constant/store-constant";
 import debounce from "@/utils/debounce";
 import DetailNav from "@/components/content/detail/DetailNav.vue";
@@ -145,6 +158,8 @@ export default {
       freshScroll: null,
       commentLoadStatus: true,
       currentIndex: 0,
+      isShowNavSlide: false,
+      isShowNavDelete: false,
     };
   },
   computed: {
@@ -283,6 +298,46 @@ export default {
       this.dataStatus = "loadding";
       this.getDetailDataHandle();
     },
+    toTieba() {
+      this.$router.replace({
+        name: "tieba",
+        query: {
+          tid: this.detailData.tieba.id,
+        },
+      });
+    },
+    async showNavSlide() {
+      if (this.dataStatus !== "ok") return;
+      if (!this.isShowNavSlide) {
+        try {
+          const { data, status } = await getUserMessage();
+          if (status !== 200) throw new Error();
+          if (
+            this.detailData.author.id !== data.id &&
+            this.detailData.tieba.authId !== data.id
+          )
+            throw new Error();
+          this.isShowNavDelete = true;
+        } catch (err) {
+          this.isShowNavDelete = false;
+        }
+        this.isShowNavSlide = true;
+        return;
+      }
+      this.isShowNavSlide = false;
+    },
+    async onDelete() {
+      try {
+        const { status } = await deleteArticle(this.detailData.id);
+        if (status !== 200) throw new Error();
+        await this.$router.back();
+        setTimeout(() => {
+          this.$bus.$emit("remove-detail", this.detailData.id);
+        }, 500);
+      } catch (error) {
+        this.$toast.fail("网络错误");
+      }
+    },
   },
 };
 </script>
@@ -292,6 +347,20 @@ export default {
     position: fixed;
     top: 45px;
     z-index: 1;
+  }
+  .nav-popup {
+    position: fixed;
+    width: 80px;
+    right: 0;
+    z-index: 10;
+    text-align: center;
+    border: 0.5px solid rgba(218, 218, 218, 0.5);
+    background-color: rgb(252, 252, 252);
+    transition: 2s;
+    div {
+      font-size: 13px;
+      line-height: 40px;
+    }
   }
   .scroll-out {
     width: 100%;

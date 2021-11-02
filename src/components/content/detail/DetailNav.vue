@@ -3,10 +3,10 @@
     <van-nav-bar>
       <div slot="left"><slot name="left"></slot></div>
       <div slot="title" class="center">
-        <img class="avatar" :src="navData.avatar?navData.avatar:require('@/assets/img/common/user-avatar/b.jpg')" alt="" />
+        <img @click="$emit('on-nav-img')" class="avatar" :src="navData.avatar?navData.avatar:require('@/assets/img/common/user-avatar/b.jpg')" alt="" />
         <div>{{ navData.title }}</div>
       </div>
-      <img class="right" slot="right" src="@/assets/img/common/point.png" />
+      <img @click="$emit('show-nav-slide')" class="right" slot="right" src="@/assets/img/common/point.png" />
     </van-nav-bar>
   </div>
 </template>

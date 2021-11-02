@@ -5,7 +5,7 @@
       src="@/assets/img/common/page-img/error.png"
       alt=""
     />
-    <div class="error-net">网络好像出了点问题(-1)</div>
+    <div class="error-net">页面出了点问题(-1)</div>
     <div @click="freshPage" class="button">戳这重试</div>
   </div>
 </template>

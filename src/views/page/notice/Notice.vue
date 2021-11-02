@@ -1,83 +1,66 @@
 <template>
-  <div class="horizontal-container">
-    <div class="scroll-wrapper" ref="scroll">
-      <div class="scroll-content">
-        <div class="scroll-item" v-for="(item, index) in emojis" :key="index">
-          {{ item }}
-        </div>
-      </div>
-    </div>
+  <div class="notice">
+    <notice-nav />
+    <scroll class="scroll" click>
+      <van-grid :gutter="10" :border="false">
+        <van-grid-item
+          @click="toRouter(index)"
+          v-for="(item, index) in gridImgList"
+          :key="index"
+          :icon="item.icon"
+          :text="item.text"
+        />
+      </van-grid>
+    </scroll>
   </div>
 </template>
 
-<script type="text/ecmascript-6">
-import BScroll from "@better-scroll/core";
-
+<script>
+import Scroll from "../../../components/common/Scroll.vue";
+import NoticeNav from "../../../components/content/notice/NoticeNav.vue";
 export default {
+  components: { NoticeNav, Scroll },
+  name: "",
   data() {
     return {
-      emojis: [
-        "👉🏼 😁 😂 🤣 👈🏼",
-        "😄 😅 😆 😉 😊",
-        "😫 😴 😌 😛 😜",
-        "👆🏻 😒 😓 😔 👇🏻",
-        "😑 😶 🙄 😏 😣",
-        "😞 😟 😤 😢 😭",
-        "🤑 😲 ☹️ 🙁 😖",
-        "👍 👎 👊 ✊ 🤛",
-        "☝️ ✋ 🤚 🖐 🖖",
-        "👍🏼 👎🏼 👊🏼 ✊🏼 🤛🏼",
-        "☝🏽 ✋🏽 🤚🏽 🖐🏽 🖖🏽",
-        "🌖 🌗 🌘 🌑 🌒",
+      gridImgList: [
+        { icon: require("@/assets/img/notice/my.png"), text: "@我的" },
+        { icon: require("@/assets/img/notice/mylike.png"), text: "点赞" },
+        { icon: require("@/assets/img/notice/myreply.png"), text: "回复" },
+        { icon: require("@/assets/img/notice/myfuns.png"), text: "粉丝" },
       ],
     };
   },
-  mounted() {
-    this.init();
-  },
-  beforeDestroy() {
-    this.bs.destroy();
-  },
   methods: {
-    init() {
-      this.bs = new BScroll(this.$refs.scroll, {
-        scrollX: true,
-        probeType: 3, // listening scroll event
-      });
-      // this.bs.on("scrollStart", () => {
-      //   console.log("scrollStart-");
-      // });
-      // this.bs.on("scroll", ({ y }) => {
-      //   console.log("scrolling-");
-      // });
-      // this.bs.on("scrollEnd", () => {
-      //   console.log("scrollingEnd");
-      // });
+    toRouter(index) {
+      switch (index) {
+        case 0:
+          this.$router.push({ name: "outher", params: { title: "@我的" } });
+          break;
+        case 1:
+          this.$router.push({ name: "outher", params: { title: "点赞" } });
+          break;
+        case 2:
+          this.$router.push("/reply");
+          break;
+        default:
+          console.log("ll");
+      }
     },
   },
 };
 </script>
-
-<style lang="less" scoped>
-.horizontal-container {
-  .scroll-wrapper {
-    position: relative;
-    width: 90%;
-    margin: 80px auto;
-    white-space: nowrap;
-    border: 3px solid #42b983;
-    border-radius: 5px;
-    overflow: hidden;
-    .scroll-content {
-      display: inline-block;
+<style lang='less' scoped>
+.notice {
+  .scroll {
+    width: 100vw;
+    height: calc(100vh - 46px - 50px);
+    /deep/ .van-icon__image {
+      width: 40px;
+      height: 40px;
     }
-    .scroll-item {
-      height: 50px;
-      line-height: 50px;
-      font-size: 24px;
-      display: inline-block;
-      text-align: center;
-      padding: 0 10px;
+    /deep/ .van-grid-item__text {
+      font-size: 13px;
     }
   }
 }

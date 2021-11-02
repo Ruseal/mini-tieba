@@ -52,7 +52,8 @@ export default {
       try {
         const { data, status } = await getUserMessage();
         if (status !== 200) throw new Error();
-        if (event.author.id !== data.id) throw new Error();
+        if (event.author.id !== data.id && event.tiebaAuthId !== data.id)
+          throw new Error();
         this.isShowDelete = true;
       } catch (err) {
         this.isShowDelete = false;
