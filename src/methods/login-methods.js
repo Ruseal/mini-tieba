@@ -175,10 +175,3 @@ const userRegisterMethod = async _this => {
     },
   });
 }
-
-// const getUserMessage = async _this => {
-//   _this.$store.commit(
-//     'savetest',
-//     { aaa: 1234567890 }
-//   );
-// }

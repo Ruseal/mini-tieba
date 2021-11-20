@@ -5,6 +5,7 @@
       v-model="value"
       placeholder="请输入搜索关键词"
       shape="round"
+      @click="$router.push({ name: 'search' })"
       readonly
     />
   </div>
@@ -16,7 +17,7 @@ export default {
   components: {},
   data() {
     return {
-      value:'大家都在搜:'
+      value: "大家都在搜:",
     };
   },
 };

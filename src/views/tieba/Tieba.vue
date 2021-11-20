@@ -55,6 +55,7 @@ import {
   getTiebaDeatil,
   getArticleList,
   getSingleArticle,
+  getTiebaAvatar,
 } from "@/api/tieba-net";
 import { userRecordTieba } from "@/api/user-net";
 import { isLoginMethod } from "@/methods/common-methods";

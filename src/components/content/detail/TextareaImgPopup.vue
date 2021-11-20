@@ -47,7 +47,6 @@ import { mapState } from "vuex";
 import { publishedComment, uploadCommentPictrue } from "@/api/detail-net";
 import * as StoreConstant from "@/constant/store-constant";
 import statusHandle from "@/utils/status-handle";
-
 import loading from "@/utils/loading";
 import TextareaTabBottom from "../../common/TextareaTabBottom.vue";
 export default {

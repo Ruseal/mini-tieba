@@ -100,20 +100,50 @@ const routes = [
     component: () => import('../views/tieba/TiebaMsg.vue')
   },
   {
-    path:'/reply',
-    name:'reply',
-    component:()=>import('../views/page/notice/NoticeReply.vue')
+    path: '/reply',
+    name: 'reply',
+    component: () => import('../views/page/notice/NoticeReply.vue')
   },
   {
-    path:'/outher',
-    name:'outher',
-    component:()=>import('../views/page/notice/NoticeOuther.vue')
+    path: '/outher',
+    name: 'outher',
+    component: () => import('../views/page/notice/NoticeOuther.vue')
   },
   {
-    path:'/user-detail',
-    name:'user-detail',
-    component:()=>import('../views/page/user/UserDetail.vue')
-  }
+    path: '/user-detail',
+    name: 'user-detail',
+    component: () => import('../views/page/user/UserDetail.vue')
+  },
+  {
+    path: '/user-type-list',
+    name: 'user-type-list',
+    component: () => import('../views/page/user/UserTypeList.vue')
+  },
+  {
+    path: '/user-edit',
+    name: 'user-edit',
+    component: () => import('../views/page/user/UserEdit.vue')
+  },
+  {
+    path: '/user-star',
+    name: 'user-star',
+    component: () => import('../views/page/user/UserStar.vue')
+  },
+  {
+    path: '/user-history',
+    name: 'user-history',
+    component: () => import('../views/page/user/UserHistory.vue')
+  },
+  {
+    path: '/user-member',
+    name: 'user-member',
+    component: () => import('../views/page/user/UserMember.vue')
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('../views/search/Search.vue')
+  },
 ]
 
 const router = new VueRouter({

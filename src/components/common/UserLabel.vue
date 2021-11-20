@@ -20,7 +20,11 @@
           src="@/assets/img/common/members/members_line.png"
           alt=""
         />
-        <span class="title-name">{{ userLabel.title }}</span>
+        <span
+          class="title-name"
+          :class="{ 'font-color': isMember && userLabel.member }"
+          >{{ userLabel.title }}</span
+        >
         <div
           v-if="isFloor"
           v-show="$store.state.currentDetailAuthorId === userLabel.id"
@@ -50,7 +54,7 @@
           第{{ userLabel.floor + 2 }}楼&nbsp;&nbsp;&nbsp;
         </div>
         <div v-if="labelType.includes('time')" class="time">
-          {{ formatDate(userLabel.createTime) }}
+          {{ getTimeDifference(userLabel.createTime) }}
         </div>
         <div v-if="labelType.includes('count')" class="count">
           关注&nbsp;&nbsp;{{ userLabel.focusCount }}&nbsp;
@@ -70,13 +74,21 @@
         alt=""
       />
       <div
-        v-if="labelRight === 'focus'"
+        v-if="
+          ((labelRight === 'focus' && !userLabel.isFocus) ||
+            $route.name === 'user-type-list') &&
+          $route.query.isSelf
+        "
         @click="onRightButton"
         class="right-button"
         ref="rightButtonRef"
       >
-        <img src="@/assets/img/common/add.png" alt="" />
-        <div>关注</div>
+        <img
+          v-show="focusDom.isShowImg"
+          src="@/assets/img/common/add.png"
+          alt=""
+        />
+        <div>{{ focusDom.text }}</div>
       </div>
       <left-arrow v-if="labelRight === 'arrow'" class="left-arrow" />
     </div>
@@ -84,13 +96,21 @@
 </template>
 
 <script>
+import mixins from "@/mixins/mixin";
 import formatDate from "@/utils/format-date";
 import LeftArrow from "./LeftArrow.vue";
+import timeDifference from "../../utils/time-difference";
 export default {
   name: "",
   components: { LeftArrow },
+  mixins: [mixins],
   data() {
-    return {};
+    return {
+      focusDom: {
+        isShowImg: false,
+        text: "已关注",
+      },
+    };
   },
   props: {
     userLabel: {
@@ -177,40 +197,60 @@ export default {
         return { marginLeft: "-0.24rem" };
       }
     },
-    formatDate() {
+    getTimeDifference() {
       return (time) => {
-        let timer = new Date().getTime() - new Date(time).getTime();
-        let date = new Date(new Date(time).getTime());
-        if (timer > 1000 * 60 * 60 * 24) {
-          return formatDate(date, "yyyy-MM-dd");
-        } else {
-          if (timer > 1000 * 60 * 60) {
-            return ~~(timer / 1000 / 60 / 60) + "小时前";
-          } else if (timer > 1000 * 60) {
-            return ~~(timer / 1000 / 60) + "分钟前";
-          } else {
-            return ~~(timer / 1000) + "秒前";
-          }
-        }
+        return timeDifference(time);
       };
     },
+  },
+  mounted() {
+    if (
+      ((this.labelRight === "focus" && !this.userLabel.isFocus) ||
+        this.$route.name === "user-type-list") &&
+      this.$route.query.isSelf
+    ) {
+      if (this.userLabel.isFocus) {
+        this.$refs.rightButtonRef.style.cssText =
+          "background-color: #e3e5e7;font-size:0.3rem";
+        this.focusDom.text = "已关注";
+      }
+    }
   },
   methods: {
     onRight() {
       this.$emit("on-right");
     },
-    onRightButton() {
-      // if(this.$refs.rightButtonRef.innerText==="关注"){
-      // }
-      // this.$refs.rightButtonRef.style.cssText =
-      //   "background-color: #e3e5e7;font-size:0.3rem";
-      // this.$refs.rightButtonRef.innerText = "已关注";
+    async onRightButton() {
+      if (this.$route.query.type === "tieba") return;
+      if (this.$refs.rightButtonRef.innerText === "已关注") {
+        if (!(await this.unFocusUserMethod(this.userLabel.authId))) return;
+        this.$refs.rightButtonRef.style.cssText =
+          "background-color: #e1f6fc;font-size:0.3rem";
+        this.focusDom.isShowImg = true;
+        this.focusDom.text = "关注";
+      } else {
+        if (!(await this.focusUserMethod(this.userLabel.authId))) return;
+        this.$refs.rightButtonRef.style.cssText =
+          "background-color: #e3e5e7;font-size:0.3rem";
+        this.focusDom.isShowImg = false;
+        this.focusDom.text = "已关注";
+      }
     },
+
     onUserlabel() {
       if (this.userLabel.isTieba) {
         this.$emit("on-label");
         return;
       } else {
+        if (this.$route.query.type === "tieba") {
+          this.$router.replace({
+            name: "tieba",
+            query: {
+              tid: this.userLabel.authId,
+            },
+          });
+          return;
+        }
         this.$router.replace({
           name: "user-detail",
           params: {
@@ -256,6 +296,9 @@ export default {
       .title-name {
         font-size: 13px;
       }
+      .font-color{
+        color: rgb(243, 38, 38);;
+      }
       .floor-author {
         width: 28px;
         height: 12px;
@@ -299,6 +342,11 @@ export default {
         color: #adadad;
         line-height: 10px;
       }
+      .article {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
   .right {
@@ -315,15 +363,17 @@ export default {
       width: 63px;
       height: 26px;
       border-radius: 13px;
-      background-color: #e1f6fc;
+      // background-color: #e1f6fc;
+      background-color: #e3e5e7;
+      font-size: 11px;
       img {
         width: 10px;
         height: 10px;
       }
       div {
         margin-left: 4px;
-        color: #0b88f2;
-        font-size: 13px;
+        // color: #0b88f2;
+        font-size: 12px;
         line-height: 26px;
       }
     }

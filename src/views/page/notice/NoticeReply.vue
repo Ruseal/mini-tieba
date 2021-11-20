@@ -55,7 +55,6 @@ export default {
         if (status !== 200) throw new Error();
         this.statusData = "ok";
         this.replyUserList = data;
-        console.log(data);
         this.$nextTick(() => {
           this.$refs.scroll.refresh();
         });

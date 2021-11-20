@@ -106,7 +106,7 @@ export default {
 
         return;
       }
-      this.$toast.success("修改成功");
+      this.$toast.success("修改成功,吧头像刷新页面后生效");
       this.isShowTiebaUpdatePopup = false;
       this.tiebaMsg.introduction = this.message;
     },
@@ -116,7 +116,10 @@ export default {
         this.fileList.forEach((objFile) => {
           data.append("tiebaAvatar", objFile.file);
         });
-        const { status } = await uploadTiebaAvatar(data, this.tiebaMsg.id);
+        const { status} = await uploadTiebaAvatar(
+          data,
+          this.tiebaMsg.id
+        );
         if (status !== 200) throw new Error();
       } catch (err) {
         this.$toast.fail("修改吧头像失败");

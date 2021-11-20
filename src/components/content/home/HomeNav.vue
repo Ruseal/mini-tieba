@@ -7,12 +7,17 @@
           v-model="value"
           placeholder="请输入搜索关键词"
           shape="round"
+          @click="$router.push({ name: 'search' })"
           readonly
         />
       </div>
       <div slot="right" class="nav-right">
         <img src="@/assets/img/home/redpackage.png" alt="" />
-        <img @click="$emit('send-article')" src="@/assets/img/home/release.png" alt="" />
+        <img
+          @click="$emit('send-article')"
+          src="@/assets/img/home/release.png"
+          alt=""
+        />
       </div>
     </van-nav-bar>
   </div>
@@ -27,7 +32,6 @@ export default {
       value: "大家都在搜:A15处理器",
     };
   },
-
 };
 </script>
 <style lang='less' scoped>
@@ -51,7 +55,6 @@ export default {
         font-size: 14px;
         color: rgb(184, 181, 181);
       }
-      
     }
     .nav-right {
       display: flex;

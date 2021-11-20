@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { getUserMessage } from "../../../api/user-net";
 import Scroll from "../../../components/common/Scroll.vue";
 import NoticeNav from "../../../components/content/notice/NoticeNav.vue";
 export default {
@@ -32,7 +33,7 @@ export default {
     };
   },
   methods: {
-    toRouter(index) {
+    async toRouter(index) {
       switch (index) {
         case 0:
           this.$router.push({ name: "outher", params: { title: "@我的" } });
@@ -43,8 +44,29 @@ export default {
         case 2:
           this.$router.push("/reply");
           break;
+        case 3:
+          const result = await this.getUserMessageMethod();
+          if (!result) {
+            break;
+          }
+          this.$router.push({
+            name: "user-type-list",
+            query: {
+              type: "fans",
+              userId: result,
+              isSelf: true,
+            },
+          });
+          break;
         default:
-          console.log("ll");
+      }
+    },
+    async getUserMessageMethod() {
+      try {
+        const { data } = await getUserMessage();
+        return data.id;
+      } catch (error) {
+        this.$toast.fail("网络错误");
       }
     },
   },

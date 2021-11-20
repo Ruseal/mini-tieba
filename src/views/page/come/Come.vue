@@ -45,6 +45,7 @@
               introduction: item.tieba.introduction
                 ? item.tieba.introduction
                 : '暂无简介',
+              isTieba:true
             }"
             isLevelCard
           />

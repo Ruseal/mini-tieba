@@ -1,4 +1,5 @@
 import { articleLike, articleUnLike } from '@/api/home-net'
+import { unFocusUser, focusUser } from "../api/user-net";
 import { focusTieba } from '../api/tieba-net'
 import statusHandle from '@/utils/status-handle'
 export default {
@@ -69,6 +70,28 @@ export default {
       } catch (error) {
         this.$toast.fail("关注失败");
         result.message && this.$toast.fail(result.message);
+      }
+    },
+
+    async unFocusUserMethod(userId) {
+      try {
+        const { status } = await unFocusUser(userId);
+        if (status !== 200) throw new Error();
+        return true;
+      } catch (error) {
+        this.$toast.fail("操作失败");
+        return false;
+      }
+    },
+
+    async focusUserMethod(userId) {
+      try {
+        const { status } = await focusUser(userId);
+        if (status !== 200) throw new Error();
+        return true;
+      } catch (error) {
+        this.$toast.fail("操作失败");
+        return false;
       }
     },
   }

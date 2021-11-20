@@ -47,6 +47,7 @@
                 members: detailData.author.members,
                 createTime: detailData.createTime,
                 level: detailData.author.level ? detailData.author.level : 1,
+                isFocus: detailData.author.isfocus,
               }
             "
             isLevelCard
@@ -109,7 +110,7 @@
 
 <script>
 import { getDetail, getComment, deleteArticle } from "@/api/detail-net";
-import { userRecordTieba, getUserMessage } from "@/api/user-net";
+import { userRecordTieba, getUserMessage, recordHistory } from "@/api/user-net";
 import * as StoreConstant from "@/constant/store-constant";
 import debounce from "@/utils/debounce";
 import DetailNav from "@/components/content/detail/DetailNav.vue";
@@ -182,6 +183,7 @@ export default {
       });
       this.freshScroll = debounce(this.$refs.scrollOutRef.refresh, 200);
       this.userRecordTiebaMethod();
+      this.recordHistoryMethod();
     },
     async getDetailDataHandle() {
       try {
@@ -231,6 +233,15 @@ export default {
       if (!this.detailData.yourUserId) return;
       try {
         const { status } = await userRecordTieba(this.detailData.tieba.id);
+        if (status !== 200) throw new Error();
+      } catch (error) {
+        this.$toast.fail("网络不稳定");
+      }
+    },
+    async recordHistoryMethod() {
+      if (!this.detailData.yourUserId) return;
+      try {
+        const { status } = await recordHistory(this.detailData.id);
         if (status !== 200) throw new Error();
       } catch (error) {
         this.$toast.fail("网络不稳定");
