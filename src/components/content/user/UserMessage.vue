@@ -4,8 +4,8 @@
       <div slot="icon" class="icon-avatar">
         <img
           :src="
-            userMessage.avatar_url
-              ? userMessage.avatar_url
+            userMessage.avatar
+              ? userMessage.avatar
               : require('@/assets/img/common/user-avatar/b.jpg')
           "
           alt=""
@@ -14,7 +14,7 @@
       <div slot="title" class="title">
         <img
           :src="
-            userMessage.members
+            userMessage.member
               ? require('@/assets/img/common/members/members_line.png')
               : require('@/assets/img/common/members/members.png')
           "
@@ -35,7 +35,7 @@
           alt=""
         />
       </div>
-      <div slot="label" class="label">{{userMessage.introduction}}</div>
+      <div slot="label" class="label">{{userMessage.indt?userMessage.indt:'这个人很懒，什么也没有留下。'}}</div>
     </van-cell>
   </div>
 </template>

@@ -7,6 +7,7 @@
       v-for="(item, index) in cellList"
       :key="index"
       :border="false"
+      @click="toUserCell(item)"
     >
       <img slot="icon" :src="item.image" />
       <div class="collection-title" slot="title">{{ item.title }}</div>
@@ -32,6 +33,30 @@ export default {
       default() {
         return false;
       },
+    },
+  },
+  methods: {
+    toUserCell(item) {
+      switch (item.title) {
+        case "我的收藏":
+          this.$router.push({
+            name: "user-star",
+            query: {
+              type: item.title,
+            },
+          });
+          break;
+        case "浏览历史":
+          this.$router.push({
+            name: "user-history",
+            // query: {
+            //   type: item.title,
+            // },
+          });
+          break;
+        default:
+          break;
+      }
     },
   },
 };

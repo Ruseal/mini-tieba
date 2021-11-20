@@ -2,7 +2,7 @@
   <div class="user-numerical">
     <van-grid class="grid" :column-num="3" :border="false">
       <van-grid-item v-for="(item, index) in numerical" :key="index">
-        <div class="text" slot="text">
+        <div class="text" slot="text" @click="toUserTypeList(item.type)">
           <div>{{ item.count }}</div>
           <div>
             {{ item.name }}
@@ -24,6 +24,22 @@ export default {
     numerical: {
       type: Array,
       required: true,
+    },
+    userId: {
+      type: Number,
+      required: true,
+    },
+  },
+  methods: {
+    toUserTypeList(type) {
+      this.$router.push({
+        name: "user-type-list",
+        query: {
+          type,
+          userId: this.userId,
+          isSelf: true,
+        },
+      });
     },
   },
 };
