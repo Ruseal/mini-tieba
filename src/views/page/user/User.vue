@@ -7,10 +7,10 @@
       <scroll class="scroll" click :bounce="false">
         <user-message
           :user-message="userMessage"
-          @click.native="toUserDetail"
+          @click.native="toUserDetail()"
         />
-        <user-numerical :numerical="userMessage.numerical" />
-        <user-card />
+        <user-numerical :numerical="userMessage.numerical" :user-id="userMessage.id" />
+        <user-card @to-user-detail="toUserDetail()"/>
         <user-swipe />
         <user-cell :cell-list="queryCellList" lastLine />
         <user-cell :cell-list="businessCellList" lastLine />
@@ -98,10 +98,10 @@ export default {
         if (status !== 200) throw new Error();
         this.userMessage = data;
         this.dataStatus = "ok";
-        this.userMessage.avatar_url &&
+        this.userMessage.avatar &&
           this.$store.dispatch(
             Constant.SAVE_USER_AVATAR,
-            this.userMessage.avatar_url
+            this.userMessage.avatar
           );
       } catch (err) {
         this.dataStatus = "error";

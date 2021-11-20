@@ -16,7 +16,9 @@
     <scroll v-else class="scroll" ref="scrollRef" click>
       <div class="top">
         <img class="avatar" :src="userData.detail.avatar" />
-        <div class="edit" v-if="userData.detail.isSelf">编辑资料</div>
+        <div class="edit" v-if="userData.detail.isSelf" @click="toUserEdit">
+          编辑资料
+        </div>
         <div
           class="focus"
           :class="{ 'focus-active': userData.detail.isFocusUser }"
@@ -27,8 +29,15 @@
         </div>
       </div>
       <div class="name">
-        <img src="../../../assets/img/common/members/members.png" alt="" />
-        <div>
+        <img
+          :src="
+            userData.detail.members
+              ? require('../../../assets/img/common/members/members_line.png')
+              : require('../../../assets/img/common/members/members.png')
+          "
+          alt=""
+        />
+        <div :class="{ 'font-color': userData.detail.members }">
           {{
             userData.detail.nickname
               ? userData.detail.nickname
@@ -39,28 +48,72 @@
       <div class="msg">
         <div>ID:{{ userData.detail.id }}</div>
         <div>吧龄:&nbsp;{{ formatYear(userData.detail.createTime) }}</div>
-        <div>{{ 744 }}</div>
+        <div v-if="userData.detail.gender !== null">
+          <img
+            :src="
+              userData.detail.gender
+                ? require('@/assets/img/user/user-detail/man.png')
+                : require('@/assets/img/user/user-detail/woman.png')
+            "
+            alt=""
+          />
+        </div>
       </div>
       <div class="intrdt">
         <div class="text">
-          {{ userData.detail.introduction }}
+          {{
+            userData.detail.introduction
+              ? userData.detail.introduction
+              : "这个人很懒，什么1也没有留下。"
+          }}
         </div>
         <left-arrow />
       </div>
       <div class="numerical">
         <div>{{ userData.detail.likeCount }}<span>获赞</span></div>
-        <div>{{ userData.detail.focusCount }}<span>关注</span></div>
-        <div>{{ userData.detail.fansCount }}<span>粉丝</span></div>
-        <div>{{ userData.detail.tiebaCount }}<span>吧</span></div>
+        <div @click="toUserTypeList('focus')">
+          {{ userData.detail.focusCount }}<span>关注</span>
+        </div>
+        <div @click="toUserTypeList('fans')">
+          {{ userData.detail.fansCount }}<span>粉丝</span>
+        </div>
+        <div @click="toUserTypeList('tieba')">
+          {{ userData.detail.tiebaCount }}<span>吧</span>
+        </div>
       </div>
       <div class="member">
         <div class="left">
-          <img src="../../../assets/img/common/members/members.png" alt="" />
-          <div class="text">暂无会员</div>
+          <img
+            :src="
+              userData.detail.members
+                ? require('../../../assets/img/common/members/members_line.png')
+                : require('../../../assets/img/common/members/members.png')
+            "
+            alt=""
+          />
+          <div class="text">
+            {{
+              userData.detail.isSelf
+                ? userData.detail.members
+                  ? "暂无会员"
+                  : "我的会员"
+                : "TA的会员"
+            }}
+          </div>
         </div>
-        <div class="right">
-          <div class="text">去获得</div>
-          <left-arrow />
+        <div class="right" @click="toMember">
+          <div class="text">
+            {{
+              userData.detail.isSelf
+                ? userData.detail.members
+                  ? "查看"
+                  : "去获得"
+                : userData.detail.members
+                ? ""
+                : "暂无"
+            }}
+          </div>
+          <left-arrow v-if="userData.detail.isSelf" />
         </div>
       </div>
       <div class="article-tab">
@@ -80,6 +133,8 @@
 
 <script>
 import { getUserDetail } from "../../../api/user-net";
+import formatYear from "../../../utils/format-year";
+import mixins from "@/mixins/mixin";
 import ArticleItem from "../../../components/common/ArticleItem.vue";
 import Error from "../../../components/common/Error.vue";
 import LeftArrow from "../../../components/common/LeftArrow.vue";
@@ -88,6 +143,7 @@ import Scroll from "../../../components/common/Scroll.vue";
 export default {
   name: "user-detail",
   components: { LeftArrow, Scroll, Loading, Error, ArticleItem },
+  mixins: [mixins],
   data() {
     return {
       statusData: "loading",
@@ -100,16 +156,7 @@ export default {
   },
   computed: {
     formatYear() {
-      return (time) => {
-        const num =
-          (new Date().getTime() - new Date(time).getTime()) /
-          1000 /
-          60 /
-          60 /
-          24 /
-          365;
-        return Math.round(num * 100) / 100 + "年";
-      };
+      return formatYear();
     },
   },
   activated() {
@@ -123,8 +170,7 @@ export default {
         if (status !== 200) throw new Error();
         this.userData = data;
         this.statusData = "ok";
-        this.freshScroll()
-        console.log(this.userData);
+        this.freshScroll();
       } catch (err) {
         this.statusData = "error";
       }
@@ -134,8 +180,39 @@ export default {
         this.$refs.scrollRef.refresh();
       });
     },
-    focusUser() {
-      console.log("s");
+    async focusUser() {
+      if (this.userData.detail.isFocusUser) {
+        if (!(await this.unFocusUserMethod(this.userId))) return;
+        this.userData.detail.isFocusUser = false;
+      } else {
+        if (!(await this.focusUserMethod(this.userId))) return;
+        this.userData.detail.isFocusUser = true;
+      }
+    },
+    toUserTypeList(type) {
+      this.$router.push({
+        name: "user-type-list",
+        query: {
+          type,
+          userId: this.userId,
+          isSelf: this.userData.detail.isSelf,
+        },
+      });
+    },
+    toUserEdit() {
+      this.$router.push({
+        name: "user-edit",
+        query: {
+          userMsg: this.userData.detail,
+        },
+      });
+    },
+    toMember() {
+      if (!this.userData.detail.isSelf) return;
+      this.$router.push({
+        name: "user-member",
+        query: { isMember: false, userMsg: this.userData.detail },
+      });
     },
   },
 };
@@ -186,6 +263,9 @@ export default {
       padding-top: 15px;
       display: flex;
       align-items: center;
+      .font-color {
+        color: rgb(243, 38, 38);
+      }
       img {
         width: 18px;
         height: 16px;
@@ -206,6 +286,10 @@ export default {
         color: rgb(143, 143, 143);
         padding-right: 15px;
         padding-left: 15px;
+        img {
+          width: 14px;
+          height: 14px;
+        }
       }
       div:first-child {
         padding-left: unset;
