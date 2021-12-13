@@ -1,4 +1,4 @@
-import { isLogin } from '../api/user-net'
+import { isLogin } from '@/api/user-net'
 
 export const isLoginMethod = async (_this) => {
   try {

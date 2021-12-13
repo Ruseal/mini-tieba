@@ -4,9 +4,8 @@
       <img
         @click="onTiebaAvatar"
         :src="
-          tiebaMsg.avatar
-            ? tiebaMsg.avatar
-            : require('../../../assets/img/common/user-avatar/b.jpg')
+          tiebaMsg.avatar ||
+          require('@/assets/img/common/default/tieba_default.png')
         "
         alt=""
       />
@@ -28,9 +27,8 @@
         <div class="card-bottom" v-if="tiebaMsg.maxAuth">
           <img
             :src="
-              tiebaMsg.maxAuth.avatar
-                ? tiebaMsg.maxAuth.avatar
-                : require('../../../assets/img/common/user-avatar/b.jpg')
+              tiebaMsg.maxAuth.avatar ||
+              require('@/assets/img/common/default/user_default.jpg')
             "
             alt=""
           />
@@ -60,7 +58,7 @@
 </template>
 
 <script>
-import { updateSign } from "../../../api/tieba-net";
+import { updateSign } from "@/api/tieba-net";
 import mixins from "@/mixins/mixin";
 export default {
   name: "",
@@ -122,7 +120,7 @@ export default {
           this.tiebaMsg.cardMsg.level += 1;
           this.tiebaMsg.cardMsg.level -= 1;
           this.annimount();
-        } catch (error) {
+        } catch (err) {
           this.$toast.fail("网络错误，签到失败!");
         }
         return;

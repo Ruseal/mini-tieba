@@ -4,7 +4,7 @@
     <div class="reply-content">{{ replyData.content }}</div>
     <div class="Belongs" @click="toDetail">
       <div>
-        {{ replyData.article.text }}
+        {{ replyData.article.text || replyData.article.title }}
       </div>
     </div>
   </div>
@@ -25,9 +25,14 @@ export default {
   },
   methods: {
     toDetail() {
+      console.log(this.replyData);
       this.$router.push({
         name: "detail",
-        params: { id: this.replyData.article.id },
+        params: {
+          id: this.replyData.article.id,
+          tiebaName: this.replyData.tieba.name,
+          tiebaAvatar: this.replyData.tieba.avatar,
+        },
       });
     },
   },

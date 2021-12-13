@@ -15,7 +15,13 @@
     <error v-else-if="statusData === 'error'" />
     <scroll v-else class="scroll" ref="scrollRef" click>
       <div class="top">
-        <img class="avatar" :src="userData.detail.avatar" />
+        <img
+          class="avatar"
+          :src="
+            userData.detail.avatar ||
+            require('@/assets/img/common/default/user_default.jpg')
+          "
+        />
         <div class="edit" v-if="userData.detail.isSelf" @click="toUserEdit">
           编辑资料
         </div>
@@ -31,40 +37,41 @@
       <div class="name">
         <img
           :src="
-            userData.detail.members
-              ? require('../../../assets/img/common/members/members_line.png')
-              : require('../../../assets/img/common/members/members.png')
+            userData.detail.member
+              ? require('@/assets/img/common/members/members_line.png')
+              : require('@/assets/img/common/members/members.png')
           "
           alt=""
         />
-        <div :class="{ 'font-color': userData.detail.members }">
+        <div :class="{ 'font-color': userData.detail.member }">
           {{
             userData.detail.nickname
               ? userData.detail.nickname
               : userData.detail.username
           }}
         </div>
-      </div>
-      <div class="msg">
-        <div>ID:{{ userData.detail.id }}</div>
-        <div>吧龄:&nbsp;{{ formatYear(userData.detail.createTime) }}</div>
-        <div v-if="userData.detail.gender !== null">
+        <div class="gender" v-if="userData.detail.gender !== null">
           <img
             :src="
-              userData.detail.gender
-                ? require('@/assets/img/user/user-detail/man.png')
-                : require('@/assets/img/user/user-detail/woman.png')
+              userData.detail.gender === '男'
+                ? require('@/assets/img/common/gender/man.png')
+                : require('@/assets/img/common/gender/woman.png')
             "
             alt=""
           />
         </div>
+      </div>
+      <div class="msg">
+        <div>ID:{{ userData.detail.id }}</div>
+        <div>用户名:&nbsp;{{ userData.detail.username }}</div>
+        <div>吧龄:&nbsp;{{ formatYear(userData.detail.createTime) }}</div>
       </div>
       <div class="intrdt">
         <div class="text">
           {{
             userData.detail.introduction
               ? userData.detail.introduction
-              : "这个人很懒，什么1也没有留下。"
+              : "这个人很懒，什么也没有留下。"
           }}
         </div>
         <left-arrow />
@@ -85,18 +92,18 @@
         <div class="left">
           <img
             :src="
-              userData.detail.members
-                ? require('../../../assets/img/common/members/members_line.png')
-                : require('../../../assets/img/common/members/members.png')
+              userData.detail.member
+                ? require('@/assets/img/common/members/members_line.png')
+                : require('@/assets/img/common/members/members.png')
             "
             alt=""
           />
           <div class="text">
             {{
               userData.detail.isSelf
-                ? userData.detail.members
-                  ? "暂无会员"
-                  : "我的会员"
+                ? userData.detail.member
+                  ? "我的会员"
+                  : "暂无会员"
                 : "TA的会员"
             }}
           </div>
@@ -105,10 +112,10 @@
           <div class="text">
             {{
               userData.detail.isSelf
-                ? userData.detail.members
+                ? userData.detail.member
                   ? "查看"
                   : "去获得"
-                : userData.detail.members
+                : userData.detail.member
                 ? ""
                 : "暂无"
             }}
@@ -126,20 +133,21 @@
         :articleItem="item"
         user-label-type="user"
         @image-load="freshScroll"
+        :user-detail-click="false"
       />
     </scroll>
   </div>
 </template>
 
 <script>
-import { getUserDetail } from "../../../api/user-net";
-import formatYear from "../../../utils/format-year";
+import { getUserDetail } from "@/api/user-net";
+import formatYear from "@/utils/format-year";
 import mixins from "@/mixins/mixin";
-import ArticleItem from "../../../components/common/ArticleItem.vue";
-import Error from "../../../components/common/Error.vue";
-import LeftArrow from "../../../components/common/LeftArrow.vue";
-import Loading from "../../../components/common/Loading.vue";
-import Scroll from "../../../components/common/Scroll.vue";
+import ArticleItem from "@/components/common/ArticleItem.vue";
+import Error from "@/components/common/Error.vue";
+import LeftArrow from "@/components/common/LeftArrow.vue";
+import Loading from "@/components/common/Loading.vue";
+import Scroll from "@/components/common/Scroll.vue";
 export default {
   name: "user-detail",
   components: { LeftArrow, Scroll, Loading, Error, ArticleItem },
@@ -274,6 +282,13 @@ export default {
       div {
         font-size: 16px;
         font-weight: 600;
+      }
+      .gender {
+        display: flex;
+        width: 18px;
+        height: 16px;
+        margin-left: 5px;
+        align-items: center;
       }
     }
     .msg {

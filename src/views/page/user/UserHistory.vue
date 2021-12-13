@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import { getRecordHistory, clearUserHistory } from "../../../api/user-net";
-import Error from "../../../components/common/Error.vue";
-import LeftArrow from "../../../components/common/LeftArrow.vue";
-import Loading from "../../../components/common/Loading.vue";
-import Scroll from "../../../components/common/Scroll.vue";
-import UserHistoryArticle from "../../../components/content/user/UserHistoryArticle.vue";
+import { getRecordHistory, clearUserHistory } from "@/api/user-net";
+import Error from "@/components/common/Error.vue";
+import LeftArrow from "@/components/common/LeftArrow.vue";
+import Loading from "@/components/common/Loading.vue";
+import Scroll from "@/components/common/Scroll.vue";
+import UserHistoryArticle from "@/components/content/user/UserHistoryArticle.vue";
 export default {
   name: "user-history",
   components: { LeftArrow, Scroll, Loading, Error, UserHistoryArticle },
@@ -42,8 +42,7 @@ export default {
         if (status !== 200) throw new Error();
         this.historyList = data;
         this.statusData = "ok";
-        console.log(data);
-      } catch (error) {
+      } catch (err) {
         this.statusData = "error";
       }
     },
@@ -66,7 +65,7 @@ export default {
         const { status } = await clearUserHistory();
         if (status !== 200) throw new Error();
         this.getRecordHistoryMethod();
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络错误，请重新尝试！");
       }
     },

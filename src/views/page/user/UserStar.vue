@@ -21,13 +21,13 @@
 </template>
 
 <script>
-import { getUserStarList } from "../../../api/user-net";
-import { unstart } from "../../../api/detail-net";
-import Error from "../../../components/common/Error.vue";
-import LeftArrow from "../../../components/common/LeftArrow.vue";
-import Loading from "../../../components/common/Loading.vue";
-import Scroll from "../../../components/common/Scroll.vue";
-import UserStarArticle from "../../../components/content/user/UserStarArticle.vue";
+import { getUserStarList } from "@/api/user-net";
+import { unstart } from "@/api/detail-net";
+import Error from "@/components/common/Error.vue";
+import LeftArrow from "@/components/common/LeftArrow.vue";
+import Loading from "@/components/common/Loading.vue";
+import Scroll from "@/components/common/Scroll.vue";
+import UserStarArticle from "@/components/content/user/UserStarArticle.vue";
 export default {
   name: "user-star",
   components: { LeftArrow, Scroll, UserStarArticle, Loading, Error },
@@ -71,7 +71,7 @@ export default {
           ),
           1
         );
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络错误");
       }
     },

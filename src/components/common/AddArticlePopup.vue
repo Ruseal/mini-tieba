@@ -59,7 +59,7 @@
           class="title-field"
           placeholder="这个贴子距离火就差这个标题"
           v-model="title"
-          :maxlength="12"
+          :maxlength="25"
         />
         <van-field
           v-model="text"
@@ -82,9 +82,9 @@
 </template>
 
 <script>
-import { releaseArticle, uploadArticlePicture } from "../../api/tieba-net";
+import { releaseArticle, uploadArticlePicture } from "@/api/tieba-net";
 import statusHandle from "@/utils/status-handle";
-import loading from "../../utils/loading";
+import loading from "@/utils/loading";
 import TiebaListPopup from "../content/home/TiebaListPopup.vue";
 export default {
   name: "",
@@ -127,8 +127,8 @@ export default {
       try {
         const { status, service } = await releaseArticle(
           this.tiebaMsg.id,
-          this.title,
-          this.text
+          this.title ? this.title : null,
+          this.text ? this.text : null
         );
         result = statusHandle(status);
         if (!result.success) throw new Error();

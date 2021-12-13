@@ -1,13 +1,10 @@
 import { request } from "./request";
 
-export function getArticleList(offset, size) {
+export function getArticleList(params) {
   return request({
     url: '/article',
     method: 'get',
-    params: {
-      offset,
-      size
-    }
+    params
   })
 }
 

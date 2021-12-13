@@ -7,6 +7,7 @@
           ? commentItem.author.nickname
           : commentItem.author.username,
         avatar: commentItem.author.avatar,
+        tiebaMaxAuthId:commentItem.tiebaAuthId,
         member: commentItem.author.members,
         createTime: commentItem.createTime,
         level: commentItem.author.level ? commentItem.author.level : 1,
@@ -17,6 +18,7 @@
       isMember
       isLevelCard
       isFloor
+      isMaxAuth
     />
     <div
       class="comment-text"
@@ -174,8 +176,7 @@ export default {
           this.commentItem.isLike = !this.commentItem.isLike;
         }
       } catch (err) {
-        this.$toast.fail("网络错误");
-        this.result.message && this.$toast.fail(result.message);
+        this.result && this.$toast.fail(result.message);
       }
     },
     freshReplyCount(event) {

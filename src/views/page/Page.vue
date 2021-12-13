@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <keep-alive include="home" exclude="tieba,come">
+    <keep-alive include="home" exclude="tieba,come,notice-Reply,notice">
       <router-view />
     </keep-alive>
     <tab-bar />

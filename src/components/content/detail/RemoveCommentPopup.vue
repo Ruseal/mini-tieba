@@ -74,14 +74,12 @@ export default {
             id: this.detailId,
             count: -1 - this.commentItem.replyCount,
           });
-          console.log(this.commentItem);
           if (this.commentItem.toReply) {
             this.$bus.$emit("fresh-reply-popup", this.commentItem.toComment);
           } else {
             this.$emit("delete-fresh-comment", this.commentItem.id);
           }
-        } catch (error) {
-          this.$toast.fail("网络错误");
+        } catch (err) {
           result && this.$toast.fail("登入过期");
         }
       } else {

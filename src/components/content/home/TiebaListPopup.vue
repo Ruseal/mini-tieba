@@ -16,8 +16,8 @@
         <van-tab v-for="(item, index) in tabList" :key="index" :title="item">
           <div v-if="!isError" class="scroll">
             <user-label
-              @click.native="onUserLabel(item)"
               class="user-label"
+              @click.native="onUserLabel(item)"
               v-for="item in propsTieba[tabsTypeArr[active]]"
               :key="item.id"
               :user-label="{
@@ -26,6 +26,7 @@
                 level: item.level ? item.level : 1,
               }"
               isLevelCard
+              :click="false"
             />
           </div>
           <div v-else class="error">网络不稳定,获取列表失败</div>
@@ -37,8 +38,8 @@
 </template>
 
 <script>
-import { getRecordList } from "../../../api/user-net";
-import { getAllTieba } from "../../../api/tieba-net";
+import { getRecordList } from "@/api/user-net";
+import { getAllTieba } from "@/api/tieba-net";
 import UserLabel from "../../common/UserLabel.vue";
 export default {
   name: "",
@@ -67,7 +68,7 @@ export default {
         if (status !== 200) throw new Error();
         if (!data.length) return;
         this.propsTieba["record"] = data;
-      } catch (error) {
+      } catch (err) {
         this.isError = true;
       }
     },
@@ -76,7 +77,7 @@ export default {
         const { status, data } = await getAllTieba();
         if (status !== 200) throw new Error();
         this.propsTieba["focus"] = data;
-      } catch (error) {
+      } catch (err) {
         this.isError = true;
       }
     },

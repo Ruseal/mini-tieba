@@ -16,7 +16,7 @@
         <loading v-if="statusData === 'loading'" />
         <error v-if="statusData === 'error'" />
         <tieba-error v-if="statusData === 'not-auth'" />
-        <scroll v-else class="scroll" click>
+        <scroll v-else class="scroll" click ref="scrollRef">
           <card-list ref="cardListRef">
             <card-list-item
               @fresh-scroll="freshColScroll"
@@ -27,7 +27,7 @@
               :key="item.id"
             />
           </card-list>
-          <square />
+          <square @click.native="$router.replace({ name: 'channel' })" />
           <div class="come-tabs">
             <div>关注的吧</div>
             <div @click="$toast('暂只支持等级排序')">等级排序</div>
@@ -45,7 +45,7 @@
               introduction: item.tieba.introduction
                 ? item.tieba.introduction
                 : '暂无简介',
-              isTieba:true
+              isTieba: true,
             }"
             isLevelCard
           />
@@ -53,25 +53,26 @@
         </scroll>
       </van-tab>
       <div class="tabs-placeholder" slot="nav-right">
-        <img src="../../../assets/img/come/sign.png" alt="" /></div
-    ></van-tabs>
+        <img src="@/assets/img/come/sign.png" alt="" />
+      </div>
+    </van-tabs>
   </div>
 </template>
 
 <script>
-import { getAllTieba } from "../../../api/tieba-net";
-import { getRecordList } from "../../../api/user-net";
-import debounce from "../../../utils/debounce";
-import Error from "../../../components/common/Error.vue";
-import Loading from "../../../components/common/Loading.vue";
-import Scroll from "../../../components/common/Scroll.vue";
-import UserLabel from "../../../components/common/UserLabel.vue";
-import CardList from "../../../components/content/come/CardList.vue";
-import CardListItem from "../../../components/content/come/CardListItem.vue";
-import ComeSearch from "../../../components/content/come/ComeSearch.vue";
-import Interest from "../../../components/content/come/Interest.vue";
-import Square from "../../../components/content/come/Square.vue";
-import TiebaError from "../../../components/content/come/TiebaError.vue";
+import { getAllTieba } from "@/api/tieba-net";
+import { getRecordList } from "@/api/user-net";
+import debounce from "@/utils/debounce";
+import Error from "@/components/common/Error.vue";
+import Loading from "@/components/common/Loading.vue";
+import Scroll from "@/components/common/Scroll.vue";
+import UserLabel from "@/components/common/UserLabel.vue";
+import CardList from "@/components/content/come/CardList.vue";
+import CardListItem from "@/components/content/come/CardListItem.vue";
+import ComeSearch from "@/components/content/come/ComeSearch.vue";
+import Interest from "@/components/content/come/Interest.vue";
+import Square from "@/components/content/come/Square.vue";
+import TiebaError from "@/components/content/come/TiebaError.vue";
 export default {
   name: "come",
   components: {
@@ -93,8 +94,8 @@ export default {
       allTiebaList: [],
       recordList: [
         {
-          id: 1,
-          avatar: require("../../../assets/img/common/user-avatar/c.jpg"),
+          id: -1,
+          avatar: require("../../../assets/img/come/tieba_xz.jpeg"),
           tiebaName: "寻找贴吧",
           notData: true,
         },
@@ -131,8 +132,12 @@ export default {
           return obj2.level - obj1.level;
         });
         this.allTiebaList = data;
+
+        this.$nextTick(() => {
+          this.$refs.scrollRef[0].refresh();
+        });
         this.getRecordListMethod();
-      } catch (error) {
+      } catch (err) {
         this.statusData = "error";
         this, $toast.fail("网络错误");
       }
@@ -140,14 +145,22 @@ export default {
     async getRecordListMethod() {
       try {
         const { status, data } = await getRecordList();
+        if (status === 401) {
+          this.statusData = "not-auth";
+          return;
+        }
         if (status !== 200) throw new Error();
         if (!data.length) return;
         this.recordList = data;
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络不稳定，获取访问贴吧记录失败");
       }
     },
     toTieba(tiebaId) {
+      if (tiebaId === -1) {
+        this.$router.replace({ name: "channel" });
+        return;
+      }
       this.$router.push({
         name: "tieba",
         query: {
@@ -163,6 +176,7 @@ export default {
 </script>
 <style lang='less' scoped>
 .come {
+  padding-bottom: 50px;
   .tabs {
     /deep/ .van-tabs__line {
       bottom: 18px;
@@ -200,8 +214,15 @@ export default {
           font-size: 13px;
         }
       }
-      .user-label {
-        margin-top: 15px;
+      .aaa {
+        padding: 10px 0;
+        height: 30px;
+        background-color: rgb(109, 156, 123);
+      }
+      /deep/.user-label {
+        height: 45px;
+        padding-top: 10px;
+        padding-bottom: 10px;
       }
     }
   }

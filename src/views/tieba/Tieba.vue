@@ -7,6 +7,7 @@
       class="scroll-out"
       :probeType="3"
       @scrollPosition="scrollOutPosition"
+      ref="scrollOutRef"
       click
     >
       <div class="scroll-out-wrapper">
@@ -32,6 +33,7 @@
             @image-load="fresh"
             user-label-type="user"
             label-right-child=""
+            
           />
           <div class="pullup-style">
             {{ isArticleHasValue ? "正在加载..." : "没有更多了" }}
@@ -55,7 +57,6 @@ import {
   getTiebaDeatil,
   getArticleList,
   getSingleArticle,
-  getTiebaAvatar,
 } from "@/api/tieba-net";
 import { userRecordTieba } from "@/api/user-net";
 import { isLoginMethod } from "@/methods/common-methods";
@@ -107,7 +108,7 @@ export default {
         this.statusData = "ok";
         this.tiebaDeatil = data;
         this.userRecordTiebaMethod();
-      } catch (error) {
+      } catch (err) {
         this.statusData = "error";
       }
     },
@@ -119,11 +120,13 @@ export default {
           10
         );
         if (status !== 200) throw new Error();
-
         if (!data.length) {
           this.isArticleHasValue = false;
           this.$refs.scrollInRef.finishPullUp();
           return;
+        }
+        if (this.articleList.length <= 10) {
+          this.isArticleHasValue = false;
         }
         this.articleList.push(...data);
         this.offset += 10;
@@ -131,7 +134,7 @@ export default {
           this.$refs.scrollInRef.refresh();
           this.$refs.scrollInRef.finishPullUp();
         });
-      } catch (error) {
+      } catch (err) {
         this.statusData = "error";
       }
     },
@@ -144,8 +147,8 @@ export default {
         this.$nextTick(() => {
           this.$refs.scrollInRef.refresh();
         });
-      } catch (error) {
-        this.$toast.fail("网络错误");
+      } catch (err) {
+        this.$toast.fail("网络不稳定");
       }
     },
     async onAddArticle() {
@@ -157,7 +160,7 @@ export default {
       try {
         const { status } = await userRecordTieba(this.tiebaDeatil.id);
         if (status !== 200) throw new Error();
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络不稳定");
       }
     },

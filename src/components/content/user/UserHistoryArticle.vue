@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import timeDifference from "../../../utils/time-difference";
+import timeDifference from "@/utils/time-difference";
 export default {
   name: "",
   components: {},
@@ -31,11 +31,13 @@ export default {
   },
   methods: {
     toDetail() {
+      console.log(this.historyItem);
       this.$router.push({
         name: "detail",
         params: {
           id: this.historyItem.id,
           tiebaName: this.historyItem.tiebaName,
+          tiebaAvatar:this.historyItem.avatar,
           from: this.$route.name,
         },
       });

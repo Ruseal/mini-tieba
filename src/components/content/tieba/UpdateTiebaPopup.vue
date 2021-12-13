@@ -103,7 +103,6 @@ export default {
         this.tiebaMsg.introduction === this.message
       ) {
         this.$toast("内容未修改");
-
         return;
       }
       this.$toast.success("修改成功,吧头像刷新页面后生效");

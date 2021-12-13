@@ -4,9 +4,8 @@
       <div slot="icon" class="icon-avatar">
         <img
           :src="
-            userMessage.avatar
-              ? userMessage.avatar
-              : require('@/assets/img/common/user-avatar/b.jpg')
+            userMessage.avatar ||
+            require('@/assets/img/common/default/user_default.jpg')
           "
           alt=""
         />
@@ -28,14 +27,18 @@
         <img
           v-if="userMessage.gender !== null"
           :src="
-            userMessage.gender
+            userMessage.gender==='男'
               ? require('@/assets/img/common/gender/man.png')
               : require('@/assets/img/common/gender/woman.png')
           "
           alt=""
         />
       </div>
-      <div slot="label" class="label">{{userMessage.indt?userMessage.indt:'这个人很懒，什么也没有留下。'}}</div>
+      <div slot="label" class="label">
+        {{
+          userMessage.indt ? userMessage.indt : "这个人很懒，什么也没有留下。"
+        }}
+      </div>
     </van-cell>
   </div>
 </template>
@@ -88,9 +91,14 @@ export default {
       }
     }
     .label {
+      width: 230px;
       margin-left: 20px;
       font-size: 10px;
       color: rgb(114, 110, 110);
+
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     .van-cell__right-icon {
       line-height: 7px;

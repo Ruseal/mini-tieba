@@ -7,7 +7,9 @@
       :src="
         userLabel.avatar
           ? userLabel.avatar
-          : require('@/assets/img/common/user-avatar/b.jpg')
+          : avatarType === 'round'
+          ? require('@/assets/img/common/default/user_default.jpg')
+          : require('@/assets/img/common/default/tieba_default.png')
       "
       alt=""
     />
@@ -23,11 +25,11 @@
         <span
           class="title-name"
           :class="{ 'font-color': isMember && userLabel.member }"
-          >{{ userLabel.title }}</span
+          >{{ userLabel.title }}{{ userLabel.isTieba && "吧" }}</span
         >
         <div
           v-if="isFloor"
-          v-show="$store.state.currentDetailAuthorId === userLabel.id"
+          v-show="$store.state.currentDetailAuthorId === userLabel.authId"
           class="floor-author"
         >
           楼主
@@ -97,9 +99,8 @@
 
 <script>
 import mixins from "@/mixins/mixin";
-import formatDate from "@/utils/format-date";
 import LeftArrow from "./LeftArrow.vue";
-import timeDifference from "../../utils/time-difference";
+import timeDifference from "@/utils/time-difference";
 export default {
   name: "",
   components: { LeftArrow },
@@ -163,6 +164,12 @@ export default {
         return false;
       },
     },
+    click: {
+      type: Boolean,
+      default() {
+        return true;
+      },
+    },
   },
   computed: {
     avatarStyle() {
@@ -182,11 +189,11 @@ export default {
     levelCardImg() {
       if (!this.userLabel.level) return;
       if (this.userLabel.level >= 1 && this.userLabel.level < 4) {
-        return require("../../assets/img/common/level_card/level_card_green.png");
-      } else if (this.aaa >= 4 && this.aaa < 9) {
-        return require("../../assets/img/common/level_card/level_card_blue.png");
+        return require("@/assets/img/common/level_card/level_card_green.png");
+      } else if (this.userLabel.level >= 4 && this.userLabel.level < 9) {
+        return require("@/assets/img/common/level_card/level_card_blue.png");
       } else {
-        return require("../../assets/img/common/level_card/level_card_gold.png");
+        return require("@/assets/img/common/level_card/level_card_gold.png");
       }
     },
     textPosition() {
@@ -238,6 +245,8 @@ export default {
     },
 
     onUserlabel() {
+      if (!this.click) return;
+
       if (this.userLabel.isTieba) {
         this.$emit("on-label");
         return;
@@ -296,8 +305,8 @@ export default {
       .title-name {
         font-size: 13px;
       }
-      .font-color{
-        color: rgb(243, 38, 38);;
+      .font-color {
+        color: rgb(243, 38, 38);
       }
       .floor-author {
         width: 28px;
@@ -343,6 +352,7 @@ export default {
         line-height: 10px;
       }
       .article {
+        width: 300px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

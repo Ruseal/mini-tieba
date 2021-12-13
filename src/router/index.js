@@ -97,52 +97,57 @@ const routes = [
   {
     path: '/tieba-msg',
     name: 'tieba-msg',
-    component: () => import('../views/tieba/TiebaMsg.vue')
+    component: () => import('@/views/tieba/TiebaMsg.vue')
   },
   {
     path: '/reply',
     name: 'reply',
-    component: () => import('../views/page/notice/NoticeReply.vue')
+    component: () => import('@/views/page/notice/NoticeReply.vue')
   },
   {
     path: '/outher',
     name: 'outher',
-    component: () => import('../views/page/notice/NoticeOuther.vue')
+    component: () => import('@/views/page/notice/NoticeOuther.vue')
   },
   {
     path: '/user-detail',
     name: 'user-detail',
-    component: () => import('../views/page/user/UserDetail.vue')
+    component: () => import('@/views/page/user/UserDetail.vue')
   },
   {
     path: '/user-type-list',
     name: 'user-type-list',
-    component: () => import('../views/page/user/UserTypeList.vue')
+    component: () => import('@/views/page/user/UserTypeList.vue')
   },
   {
     path: '/user-edit',
     name: 'user-edit',
-    component: () => import('../views/page/user/UserEdit.vue')
+    component: () => import('@/views/page/user/UserEdit.vue')
   },
   {
     path: '/user-star',
     name: 'user-star',
-    component: () => import('../views/page/user/UserStar.vue')
+    component: () => import('@/views/page/user/UserStar.vue')
   },
   {
     path: '/user-history',
     name: 'user-history',
-    component: () => import('../views/page/user/UserHistory.vue')
+    component: () => import('@/views/page/user/UserHistory.vue')
   },
   {
     path: '/user-member',
     name: 'user-member',
-    component: () => import('../views/page/user/UserMember.vue')
+    component: () => import('@/views/page/user/UserMember.vue')
   },
   {
     path: '/search',
     name: 'search',
-    component: () => import('../views/search/Search.vue')
+    component: () => import('@/views/search/Search.vue')
+  },
+  {
+    path: '/empty',
+    name: 'empty',
+    component: () => import('@/components/common/CommentEmpty.vue')
   },
 ]
 
@@ -151,16 +156,14 @@ const router = new VueRouter({
   mode: 'history'
 })
 
-router.beforeEach((to, from, next) => {
-  if (['/page/user', '/page/notice'].includes(to.path)) {
-    setTimeout(async () => {
-      const res = await routerTokenAuth()
-      if (res && res.status !== 200) {
-        localStorage.removeItem('token')
-        router.replace({ name: "login-user" });
-        return
-      }
-    })
+router.beforeEach(async (to, from, next) => {
+  if (['/page/user', '/page/notice'].includes(to.path)) {             
+    const res = await routerTokenAuth()
+    if (res && res.status !== 200) {
+      localStorage.removeItem('token')
+      router.replace({ name: "login-user" });
+      return
+    }
   }
   next()
 })

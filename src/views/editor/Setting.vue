@@ -4,7 +4,7 @@
     <scroll class="scroll" click>
       <div class="placeholder"></div>
       <van-cell class="account-cell" title="账号管理" is-link center>
-        <img slot="default" src="@/assets/img/editor/baidu_icon.png" alt="" />
+        <img slot="default" src="@/assets/img/common/default/app_logo.png" alt="" />
       </van-cell>
       <van-cell class="account-cell my-cell" title="个人资料" is-link center>
         <img slot="default" :src="userAvatar" alt="" />
@@ -90,7 +90,7 @@ export default {
         this.$toast.clear();
         localStorage.removeItem("token");
         this.$router.replace("/login-user");
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("请检查网络");
       }
     },

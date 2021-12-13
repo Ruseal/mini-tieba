@@ -36,13 +36,11 @@ export function getArticleList(tiebaId, offset, size) {
   })
 }
 
-export function createTieba(name) {
+export function createTieba(data) {
   return request({
     url: '/tieba',
     method: 'post',
-    data: {
-      name
-    }
+    data
   })
 }
 
@@ -53,7 +51,7 @@ export function applyAuth(tiebaId) {
   })
 }
 
-export function createTiebaArticle(tiebaId, title, text) {
+export function createTiebaArticle(tiebaId, text, title) {
   return request({
     url: `/article/${tiebaId}/tieba`,
     method: 'post',
@@ -129,6 +127,20 @@ export function uploadArticlePicture(data, articleId) {
       articleId
     }
 
+  })
+}
+
+export function getCategoryList() {
+  return request({
+    url: `/tieba/category`,
+    method: 'get'
+  })
+}
+
+export function getBanner() {
+  return request({
+    url: `/tieba/swiper/banner`,
+    method: 'get'
   })
 }
 

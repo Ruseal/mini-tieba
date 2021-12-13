@@ -1,6 +1,6 @@
 <template>
   <div class="user-Type-list">
-    <van-nav-bar :title="'全部'+title">
+    <van-nav-bar :title="'全部' + title">
       <left-arrow slot="left" @click.native="$router.back()" />
     </van-nav-bar>
     <loading v-if="statusData === 'loading'" />
@@ -15,14 +15,15 @@
           v-for="item in typeList"
           :key="item.id"
           :userLabel="{
-            authId:item.id,
+            authId: item.id,
             title: item.name,
             avatar: item.avatar,
             introduction: item.indt,
-            isFocus:item.isfocus,
+            isFocus: item.isfocus,
           }"
           :labelType="['article']"
           labelRight="focus"
+          :avatarType="$route.query.type !== 'tieba' ? 'round' : 'ellipse'"
         />
       </scroll>
     </div>
@@ -30,13 +31,14 @@
 </template>
 
 <script>
-import { getUserDetailList } from "../../../api/user-net";
-import Error from "../../../components/common/Error.vue";
+import { getUserDetailList } from "@/api/user-net";
+import { clearBadge } from "@/api/api-net";
+import Error from "@/components/common/Error.vue";
 
-import LeftArrow from "../../../components/common/LeftArrow.vue";
-import Loading from "../../../components/common/Loading.vue";
-import Scroll from "../../../components/common/Scroll.vue";
-import UserLabel from "../../../components/common/UserLabel.vue";
+import LeftArrow from "@/components/common/LeftArrow.vue";
+import Loading from "@/components/common/Loading.vue";
+import Scroll from "@/components/common/Scroll.vue";
+import UserLabel from "@/components/common/UserLabel.vue";
 export default {
   name: "user-type-list",
   components: { LeftArrow, Scroll, UserLabel, Loading, Error },
@@ -51,6 +53,7 @@ export default {
   },
   created() {
     this.typeHandle();
+    this.clearBadgeMethod();
     this.getUserDetailListMethod();
   },
 
@@ -73,6 +76,16 @@ export default {
           this.typeName = "贴吧";
           break;
         default:
+      }
+    },
+    async clearBadgeMethod() {
+      try {
+        const { status } = await clearBadge({ type: "focus" });
+        if (status === 401) return;
+        if (status !== 200) throw new Error();
+        this.$bus.$emit("clear-badge");
+      } catch (err) {
+        this.$toast.fail("网络错误");
       }
     },
     async getUserDetailListMethod() {

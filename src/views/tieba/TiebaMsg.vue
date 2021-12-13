@@ -8,7 +8,7 @@
         :src="
           tiebaMsg.avatar
             ? tiebaMsg.avatar
-            : require('../../assets/img/common/user-avatar/b.jpg')
+            : require('@/assets/img/common/default/tieba_default.png')
         "
         alt=""
       />
@@ -64,10 +64,10 @@
 </template>
 
 <script>
-import { unFocusTieba } from "../../api/tieba-net";
+import { unFocusTieba } from "@/api/tieba-net";
 import mixins from "@/mixins/mixin";
-import LeftArrow from "../../components/common/LeftArrow.vue";
-import UpdateTiebaPopup from "../../components/content/tieba/UpdateTiebaPopup.vue";
+import LeftArrow from "@/components/common/LeftArrow.vue";
+import UpdateTiebaPopup from "@/components/content/tieba/UpdateTiebaPopup.vue";
 export default {
   name: "tieba-msg",
   components: {
@@ -128,7 +128,7 @@ export default {
         this.tiebaMsg.focusCount -= 1;
         this.$toast("取消关注");
         localStorage.removeItem("sign-time" + this.tiebaMsg.id);
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("操作失败");
       }
     },

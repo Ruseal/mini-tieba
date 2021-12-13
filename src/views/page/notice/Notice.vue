@@ -9,6 +9,7 @@
           :key="index"
           :icon="item.icon"
           :text="item.text"
+          :badge="item.badge || ''"
         />
       </van-grid>
     </scroll>
@@ -16,12 +17,13 @@
 </template>
 
 <script>
-import { getUserMessage } from "../../../api/user-net";
-import Scroll from "../../../components/common/Scroll.vue";
-import NoticeNav from "../../../components/content/notice/NoticeNav.vue";
+import { getUserMessage } from "@/api/user-net";
+import { getBadge } from "@/api/api-net";
+import Scroll from "@/components/common/Scroll.vue";
+import NoticeNav from "@/components/content/notice/NoticeNav.vue";
 export default {
   components: { NoticeNav, Scroll },
-  name: "",
+  name: "notice",
   data() {
     return {
       gridImgList: [
@@ -32,7 +34,27 @@ export default {
       ],
     };
   },
+  created() {
+    this.$bus.$on("clear-badge", this.getBadgeMethod);
+    this.getBadgeMethod();
+  },
+  destroyed() {
+    this.$bus.$off("clear-badge", this.getBadgeMethod);
+  },
   methods: {
+    async getBadgeMethod() {
+      try {
+        const { status, data } = await getBadge();
+        if (status === 401) return;
+        if (status !== 200) throw new Error();
+        if (!data) return;
+        this.$set(this.gridImgList[2], "badge", data.reply || "");
+        this.$set(this.gridImgList[3], "badge", data.focus || "");
+        this.$bus.$emit("badge", data);
+      } catch (err) {
+        this.$toast.fail("网络错误");
+      }
+    },
     async toRouter(index) {
       switch (index) {
         case 0:
@@ -42,7 +64,7 @@ export default {
           this.$router.push({ name: "outher", params: { title: "点赞" } });
           break;
         case 2:
-          this.$router.push("/reply");
+          this.$router.push({ name: "reply"});
           break;
         case 3:
           const result = await this.getUserMessageMethod();
@@ -65,7 +87,7 @@ export default {
       try {
         const { data } = await getUserMessage();
         return data.id;
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络错误");
       }
     },

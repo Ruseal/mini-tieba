@@ -32,8 +32,8 @@ import UserNumerical from "@/components/content/user/UserNumerical.vue";
 import UserCard from "@/components/content/user/UserCard.vue";
 import UserSwipe from "@/components/content/user/UserSwipe.vue";
 import UserCell from "@/components/content/user/UserCell.vue";
-import Loading from "../../../components/common/Loading.vue";
-import Error from "../../../components/common/Error.vue";
+import Loading from "@/components/common/Loading.vue";
+import Error from "@/components/common/Error.vue";
 
 export default {
   name: "user",

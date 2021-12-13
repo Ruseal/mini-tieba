@@ -4,15 +4,15 @@
       <div class="title">可能感兴趣的吧</div>
       <left-arrow class="arrow" />
     </div>
-    <div class="list">
+    <div class="list" @click="$router.replace({name:'channel'})">
       <div class="item">
-        <img src="../../../assets/img/come/app_utils.png" alt="" />
+        <img src="@/assets/img/come/app_utils.png" alt="" />
         <div class="aquare">吧广场</div>
         <div class="label">找优质好吧</div>
       </div>
     </div>
     <div class="create" @click="createTieba">
-      <img src="../../../assets/img/come/create.png" alt="" />
+      <img src="@/assets/img/come/create.png" alt="" />
       <div>创建自己的吧</div>
     </div>
   </div>
@@ -37,7 +37,7 @@ export default {
 </script>
 <style lang='less' scoped>
 .interest {
-  padding-bottom: 40px;
+  padding-bottom: 30px;
   .interest-tabs {
     position: relative;
     display: flex;
@@ -91,7 +91,6 @@ export default {
     border: 1px solid rgb(177, 177, 177);
     margin: 0 auto;
     margin-top: 30px;
-    margin-bottom: 80px;
     img {
       margin-top: 3px;
       width: 15px;

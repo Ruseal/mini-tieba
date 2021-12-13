@@ -1,6 +1,6 @@
 import { articleLike, articleUnLike } from '@/api/home-net'
-import { unFocusUser, focusUser } from "../api/user-net";
-import { focusTieba } from '../api/tieba-net'
+import { unFocusUser, focusUser } from "@/api/user-net";
+import { focusTieba } from '@/api/tieba-net'
 import statusHandle from '@/utils/status-handle'
 export default {
   data() {
@@ -67,7 +67,7 @@ export default {
         this.tiebaMsg.cardMsg.isFocus = true;
         this.tiebaMsg.focusCount += 1;
         this.$toast("已关注");
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("关注失败");
         result.message && this.$toast.fail(result.message);
       }
@@ -78,7 +78,7 @@ export default {
         const { status } = await unFocusUser(userId);
         if (status !== 200) throw new Error();
         return true;
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("操作失败");
         return false;
       }
@@ -87,12 +87,36 @@ export default {
     async focusUserMethod(userId) {
       try {
         const { status } = await focusUser(userId);
+        if (status === 401) {
+          this.$toast.fail('用户未登入')
+          return
+        }
         if (status !== 200) throw new Error();
         return true;
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("操作失败");
         return false;
       }
     },
+
+    searchCellRouter() {
+      if (this.cellType === 'tieba') {
+        this.$router.push({
+          name: "tieba",
+          query: {
+            tid: this.dataList.id,
+          },
+        });
+        return
+      }
+      if (this.cellType === 'user') {
+        this.$router.push({
+          name: "user-detail",
+          params: {
+            userId: this.dataList.id,
+          },
+        });
+      }
+    }
   }
 }

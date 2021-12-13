@@ -1,6 +1,6 @@
 <template>
   <div class="square">
-    <img src="../../../assets/img/come/app_utils.png" alt="" />
+    <img src="@/assets/img/come/app_utils.png" alt="" />
     <div>
       <div>吧广场</div>
       <div>快戳这里，这有很多你感兴趣的吧</div>

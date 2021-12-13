@@ -10,6 +10,7 @@
         v-for="(item, index) in icon"
         :key="index"
         :to="{ name: item.path }"
+        :badge="index === 3 ? badge : ''"
       >
         <span class="tabbar-font">{{ item.title }}</span>
         <img
@@ -25,12 +26,13 @@
 
 <script>
 export default {
-  name: "",
+  name: "tabbar",
   components: {},
   data() {
     return {
       isnight: false,
       active: 0,
+      badge: "",
       icon: [
         {
           title: "首页",
@@ -64,6 +66,14 @@ export default {
         },
       ],
     };
+  },
+  created() {
+    this.$bus.$on("badge", this.setBadge);
+  },
+  methods: {
+    setBadge(badge) {
+      this.badge = badge.reply + badge.focus || "";
+    },
   },
 };
 </script>

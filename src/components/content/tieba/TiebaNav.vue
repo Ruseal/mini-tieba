@@ -2,9 +2,9 @@
   <div class="nav">
     <div><left-arrow class="arrow" @click.native="$router.back()"/></div>
     <div>
-      <img src="../../../assets/img/common/tieba-avatar/search.png" alt="" />
-      <img src="../../../assets/img/common/tieba-avatar/bell.png" alt="" />
-      <img src="../../../assets/img/common/tieba-avatar/share.png" alt="" />
+      <img src="@/assets/img/common/tieba-avatar/search.png" alt="" />
+      <img src="@/assets/img/common/tieba-avatar/bell.png" alt="" />
+      <img src="@/assets/img/common/tieba-avatar/share.png" alt="" />
     </div>
   </div>
 </template>

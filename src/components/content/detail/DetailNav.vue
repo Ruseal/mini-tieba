@@ -3,10 +3,23 @@
     <van-nav-bar>
       <div slot="left"><slot name="left"></slot></div>
       <div slot="title" class="center">
-        <img @click="$emit('on-nav-img')" class="avatar" :src="navData.avatar?navData.avatar:require('@/assets/img/common/user-avatar/b.jpg')" alt="" />
+        <img
+          @click="$emit('on-nav-img')"
+          class="avatar"
+          :src="
+            navData.avatar ||
+            require('@/assets/img/common/default/tieba_default.png')
+          "
+          alt=""
+        />
         <div>{{ navData.title }}</div>
       </div>
-      <img @click="$emit('show-nav-slide')" class="right" slot="right" src="@/assets/img/common/point.png" />
+      <img
+        @click="$emit('show-nav-slide')"
+        class="right"
+        slot="right"
+        src="@/assets/img/common/point.png"
+      />
     </van-nav-bar>
   </div>
 </template>
@@ -23,7 +36,7 @@ export default {
       type: Object,
       default() {
         return {
-          avatar: require("@/assets/img/common/user-avatar/b.jpg"),
+          avatar: require("@/assets/img/common/default/tieba_default.png"),
           title: "贴吧名",
         };
       },
@@ -39,7 +52,7 @@ export default {
     .avatar {
       width: 27px;
       height: 25px;
-      object-position: center;
+      object-fit: cover;
       object-position: center;
       border-radius: 9px;
       margin-right: 8px;

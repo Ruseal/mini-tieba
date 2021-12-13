@@ -1,7 +1,11 @@
 <template>
   <div class="user-star-article" ref="userStarArticleRef">
     <div class="delete">
-      <img @click="deleteStar" src="../../../assets/img/user/delete.png" alt="" />
+      <img
+        @click="deleteStar"
+        src="@/assets/img/user/delete.png"
+        alt=""
+      />
     </div>
     <div class="right">
       <van-cell
@@ -18,9 +22,8 @@
           class="avatar"
           slot="icon"
           :src="
-            starItem.author.avatar
-              ? starItem.author.avatar
-              : require('../../../assets/img/common/user-avatar/b.jpg')
+            starItem.author.avatar ||
+            require('@/assets/img/common/default/user_default.jpg')
           "
         />
         <van-button
@@ -81,13 +84,14 @@ export default {
         params: {
           id: this.starItem.id,
           tiebaName: this.starItem.tieba.tiebaName,
+          tiebaAvatar:this.starItem.tieba.tiebaAvatarUrl,
           from: this.$route.name,
         },
       });
     },
-    deleteStar(){
-      this.$emit('deleteStar',this.starItem.id)
-    }
+    deleteStar() {
+      this.$emit("deleteStar", this.starItem.id);
+    },
   },
 };
 </script>

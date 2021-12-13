@@ -1,7 +1,7 @@
 <template>
   <div class="notice-nav">
     <van-nav-bar title="消息">
-      <img class="img" slot="right" src="@/assets/img/notice/addnotice.png"/>
+      <img class="img" @click="$toast('暂无socket通讯')" slot="right" src="@/assets/img/notice/addnotice.png"/>
     </van-nav-bar>
   </div>
 </template>

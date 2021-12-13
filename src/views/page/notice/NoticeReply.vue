@@ -28,16 +28,16 @@
 </template>
 
 <script>
-import { getUserReply } from "../../../api/api-net";
+import { getUserReply, clearBadge } from "@/api/api-net";
 
 import LeftArrow from "@/components/common/LeftArrow.vue";
 import Scroll from "@/components/common/Scroll.vue";
-import ReplyWrapper from "../../../components/content/notice/ReplyWrapper.vue";
-import UserLabel from "../../../components/common/UserLabel.vue";
-import Error from "../../../components/common/Error.vue";
-import Loading from "../../../components/common/Loading.vue";
+import ReplyWrapper from "@/components/content/notice/ReplyWrapper.vue";
+import UserLabel from "@/components/common/UserLabel.vue";
+import Error from "@/components/common/Error.vue";
+import Loading from "@/components/common/Loading.vue";
 export default {
-  name: "",
+  name: "notice-Reply",
   components: { LeftArrow, Scroll, ReplyWrapper, UserLabel, Error, Loading },
   data() {
     return {
@@ -46,9 +46,20 @@ export default {
     };
   },
   created() {
+    this.clearBadgeMethod();
     this.getUserReplyMethod();
   },
   methods: {
+    async clearBadgeMethod() {
+      try {
+        const { status } = await clearBadge({type:'reply'});
+        if (status === 401) return;
+        if (status !== 200) throw new Error();
+        this.$bus.$emit('clear-badge')
+      } catch (err) {
+        this.$toast.fail("网络错误");
+      }
+    },
     async getUserReplyMethod() {
       try {
         const { data, status } = await getUserReply();
@@ -58,7 +69,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.scroll.refresh();
         });
-      } catch (error) {
+      } catch (err) {
         this.statusData = "error";
       }
     },

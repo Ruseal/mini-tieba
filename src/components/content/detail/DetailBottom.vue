@@ -47,12 +47,12 @@ export default {
         : "抢沙发";
     },
     yourUserAvatarHandle() {
-      let avatar = require("@/assets/img/common/user-avatar/b.jpg");
+      let avatar = require("@/assets/img/common/default/user_default.jpg");
       if (this.detailData.yourUser) {
         if (this.detailData.yourUser.avatar) {
           avatar = this.detailData.yourUser.avatar;
         } else {
-          avatar = require("@/assets/img/common/user-avatar/b.jpg");
+          avatar = require("@/assets/img/common/default/user_default.jpg");
         }
       }
       return avatar;

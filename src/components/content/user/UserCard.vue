@@ -3,7 +3,11 @@
     <div class="wrapper">
       <van-cell class="card-title" title="创作中心" :border="false" is-link />
       <van-grid :column-num="creationList.lenth" :border="false">
-        <van-grid-item @click="toUserDetail(index)" v-for="(value, index) in creationList" :key="index">
+        <van-grid-item
+          @click="toUserDetail(index)"
+          v-for="(value, index) in creationList"
+          :key="index"
+        >
           <img class="card-img" slot="icon" :src="value.image" />
           <div class="card-text" slot="text">{{ value.name }}</div>
         </van-grid-item>
@@ -38,12 +42,18 @@ export default {
       ],
     };
   },
-  methods:{
-    toUserDetail(index){
-      if(index!==0) return
-      this.$emit('to-user-detail')
-    }
-  }
+  methods: {
+    toUserDetail(index) {
+      if (index !== 0) {
+        this.$router.push({
+          name: "empty",
+          query: { name: this.creationList[index].name },
+        });
+        return;
+      }
+      this.$emit("to-user-detail");
+    },
+  },
 };
 </script>
 <style lang='less' scoped>

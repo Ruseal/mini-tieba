@@ -8,19 +8,17 @@
         <img
           class="avatar"
           :src="
-            userMsg.avatar
-              ? userMsg.avatar
-              : require('../../../assets/img/common/user-avatar/b.jpg')
+            userMsg.avatar || require('@/assets/img/common/default/user_default.jpg')
           "
           alt=""
         />
         <div class="user-name">
-          <h2 :class="{ 'font-color': !!userMsg.members }">
+          <h2 :class="{ 'font-color': !!userMsg.member }">
             {{ userMsg.nickname ? userMsg.nickname : userMsg.username }}
           </h2>
           <img
             :src="
-              userMsg.members
+              userMsg.member
                 ? require('../../../assets/img/common/members/members_line.png')
                 : require('../../../assets/img/common/members/members.png')
             "
@@ -29,21 +27,21 @@
           <img
             class="member-icon"
             :src="
-              userMsg.members
+              userMsg.member
                 ? require('../../../assets/img/user/vip-red.png')
                 : require('../../../assets/img/user/vip-gray.png')
             "
             alt=""
           />
         </div>
-        <p>{{ userMsg.members ? "您已成为会员啦" : "您还不是会员" }}</p>
+        <p>{{ userMsg.member ? "您已成为会员啦" : "您还不是会员" }}</p>
       </div>
       <van-button
         class="button"
         type="default"
         size="large"
         @click="memberPopup(true)"
-        >{{ userMsg.members ? "续费贴吧会员" : "开通贴吧会员" }}</van-button
+        >{{ userMsg.member ? "续费贴吧会员" : "开通贴吧会员" }}</van-button
       >
       <div class="cell-wrapper">
         <h1>会员特权</h1>
@@ -67,7 +65,7 @@
       <van-nav-bar class="nav-img">
         <div class="title" slot="title">
           <img
-            src="../../../assets/img/common/members/members_line.png"
+            src="@/assets/img/common/members/members_line.png"
             alt=""
           />
           &nbsp;
@@ -76,7 +74,7 @@
         <img
           slot="left"
           @click="memberPopup(false)"
-          src="../../../assets/img/common/tieba-avatar/exit_highlight.png"
+          src="@/assets/img/common/tieba-avatar/exit_highlight.png"
           alt=""
         />
       </van-nav-bar>
@@ -107,15 +105,15 @@
 </template>
 
 <script>
-import { openMember } from "../../../api/user-net";
-import LeftArrow from "../../../components/common/LeftArrow.vue";
-import loading from "../../../utils/loading";
+import { openMember } from "@/api/user-net";
+import LeftArrow from "@/components/common/LeftArrow.vue";
+import loading from "@/utils/loading";
 export default {
   name: "",
   components: { LeftArrow },
   data() {
     return {
-      userMsg: [],
+      userMsg: {},
       privilegeList: [
         {
           id: 1,
@@ -176,7 +174,7 @@ export default {
       this.userMsg = this.$route.query.userMsg;
     },
     memberPopup(isShow) {
-      if (this.userMsg.members) {
+      if (this.userMsg.member) {
         this.$toast("暂不支持会员续费");
         return;
       }
@@ -190,7 +188,7 @@ export default {
       this.price = event.price;
     },
     async openMember() {
-      if (this.userMsg.members) {
+      if (this.userMsg.member) {
         this.$toast("您已是会员");
         return;
       }
@@ -198,12 +196,12 @@ export default {
       try {
         const { status } = await openMember();
         if (status !== 200) throw new Error();
-        this.userMsg.members = true;
+        this.userMsg.member = true;
         setTimeout(() => {
           this.$toast.success("开通会员成功");
           this.isShowMemberPopup = false;
         }, 1000);
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络错误，稍后重新尝试");
       }
     },

@@ -5,9 +5,9 @@
       <div>创建贴吧</div>
       <div></div>
     </div>
-    <img class="fake-img" src="../../assets/img/come/tb.jpg" alt="" />
+    <img class="fake-img" src="@/assets/img/come/tb.jpg" alt="" />
     <div class="wrapper">
-      <img src="../../assets/img/come/level_apply.png" alt="" />
+      <img src="@/assets/img/come/level_apply.png" alt="" />
       <div class="right">
         <div>吧等级</div>
         <div class="bottom">吧内等级达到3级以上</div>
@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import { applyAuth } from "../../api/tieba-net";
-import loading from '../../utils/loading'
-import LeftArrow from "../../components/common/LeftArrow.vue";
+import { applyAuth } from "@/api/tieba-net";
+import loading from '@/utils/loading'
+import LeftArrow from "@/components/common/LeftArrow.vue";
 export default {
   name: "",
   components: { LeftArrow },
@@ -42,7 +42,7 @@ export default {
             return;
           }
           if (this.$route.query.level < 3) {
-            this.$toast.fail("贴吧等级不足3级无法申请吧主");
+            this.$toast.fail("贴吧等级不足,至少3级！");
             return;
           }
           this.applyMaxAuth();
@@ -61,8 +61,8 @@ export default {
         if (status !== 200) throw new Error();
         this.$toast.success("恭喜你已成为本吧吧主");
         this.$router.back();
-      } catch (error) {
-        this.$toast.fail("网络错误");
+      } catch (err) {
+        this.$toast.fail("网络不稳定");
       }
     },
   },

@@ -3,14 +3,15 @@
     <div class="top" ref="colorRef"></div>
     <div class="bottom">
       <div>{{ tiebaCardItem.tiebaName }}</div>
-      <div v-if="!tiebaCardItem.notData">关注&nbsp;&nbsp;{{ tiebaCardItem.focusCount }}</div>
+      <div v-if="!tiebaCardItem.notData">
+        关注&nbsp;&nbsp;{{ tiebaCardItem.focusCount }}
+      </div>
       <div v-else>您还未留下贴吧足迹</div>
     </div>
     <img
       :src="
-        tiebaCardItem.avatar
-          ? tiebaCardItem.avatar
-          : require('@/assets/img/common/user-avatar/c.jpg')
+        tiebaCardItem.avatar ||
+        require('@/assets/img/common/default/tieba_default.png')
       "
       class="avatar"
     />
@@ -44,9 +45,9 @@ export default {
     this.$refs.colorRef.style.cssText = `background-color:${
       this.color[~~(Math.random() * 7)]
     } ;`;
-    this.$nextTick(()=>{
-      this.$emit('fresh-scroll')
-    })
+    this.$nextTick(() => {
+      this.$emit("fresh-scroll");
+    });
   },
 };
 </script>

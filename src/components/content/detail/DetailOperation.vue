@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import mixins from "../../../mixins/mixin";
+import mixins from "@/mixins/mixin";
 export default {
   name: "",
   components: {},
@@ -54,9 +54,6 @@ export default {
   },
   destroyed() {
     this.$bus.$off("sync-a", this.syncHandle);
-  },
-  methods: {
- 
   },
 };
 </script>

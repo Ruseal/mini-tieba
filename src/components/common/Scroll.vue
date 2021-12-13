@@ -63,7 +63,12 @@ export default {
         click: this.click,
         probeType: this.probeType,
         pullUpLoad: this.pullUpLoad,
-        bounce: this.bounce,
+        bounce:{
+          top: this.bounce,
+          bottom: false,
+          left: false,
+          right: false,
+        },
         scrollX: this.scrollX,
       });
       this.bs &&
@@ -77,6 +82,10 @@ export default {
         });
       this.bs && this.bs.hooks.on("enable", () => {});
       this.bs && this.bs.on("disable", () => {});
+      this.bs &&
+        this.bs.on("touchEnd", () => {
+          this.$emit("end");
+        });
     },
     scrollTo(x, y, time = 500) {
       this.bs && this.bs.scrollTo(x, y, time);

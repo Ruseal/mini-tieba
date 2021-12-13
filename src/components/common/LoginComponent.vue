@@ -125,8 +125,8 @@
 </template>
 
 <script>
-import { routerType, clickBtnHandle } from "../../methods/login-methods";
-import * as LoginConstant from "../../constant/login-constant";
+import { routerType, clickBtnHandle } from "@/methods/login-methods";
+import * as LoginConstant from "@/constant/login-constant";
 
 import LeftArrow from "./LeftArrow.vue";
 import InputBox from "./InputBox.vue";

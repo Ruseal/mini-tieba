@@ -4,7 +4,10 @@
       @on-nav-img="toTieba"
       @show-nav-slide="showNavSlide"
       ref="navRef"
-      :nav-data="{ avatar: null, title: $route.params.tiebaName }"
+      :nav-data="{
+        avatar: $route.params.tiebaAvatar,
+        title: $route.params.tiebaName,
+      }"
       ><left-arrow slot="left" @click.native="onNavLeft"
     /></detail-nav>
     <div v-if="dataStatus === 'ok'" v-show="isShowNavSlide" class="nav-popup">
@@ -44,7 +47,7 @@
                 title: detailData.author.nickname
                   ? detailData.author.nickname
                   : detailData.author.username,
-                members: detailData.author.members,
+                member: detailData.author.members,
                 createTime: detailData.createTime,
                 level: detailData.author.level ? detailData.author.level : 1,
                 isFocus: detailData.author.isfocus,
@@ -69,7 +72,7 @@
             v-if="$route.params.from !== 'tieba'"
             :user-label="
               detailData.tieba && {
-                avatar: detailData.tieba.avatar,
+                avatar: detailData.tieba.tiebaAvatarUrl,
                 title: detailData.tieba.tiebaName,
                 focusCount: detailData.tieba.focusCount,
                 contentCount: detailData.tieba.contentCount,
@@ -184,6 +187,9 @@ export default {
       this.freshScroll = debounce(this.$refs.scrollOutRef.refresh, 200);
       this.userRecordTiebaMethod();
       this.recordHistoryMethod();
+      this.$nextTick(()=>{
+        this.freshScroll()
+      })
     },
     async getDetailDataHandle() {
       try {
@@ -234,7 +240,7 @@ export default {
       try {
         const { status } = await userRecordTieba(this.detailData.tieba.id);
         if (status !== 200) throw new Error();
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络不稳定");
       }
     },
@@ -243,7 +249,7 @@ export default {
       try {
         const { status } = await recordHistory(this.detailData.id);
         if (status !== 200) throw new Error();
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络不稳定");
       }
     },
@@ -340,12 +346,17 @@ export default {
     async onDelete() {
       try {
         const { status } = await deleteArticle(this.detailData.id);
+        console.log(status);
+        if(status===401){
+          this.$toast.fail('登入已过期')
+          return
+        }
         if (status !== 200) throw new Error();
         await this.$router.back();
         setTimeout(() => {
           this.$bus.$emit("remove-detail", this.detailData.id);
         }, 500);
-      } catch (error) {
+      } catch (err) {
         this.$toast.fail("网络错误");
       }
     },

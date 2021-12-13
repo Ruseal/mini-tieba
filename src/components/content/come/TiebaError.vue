@@ -1,6 +1,6 @@
 <template>
  <div class='tieba-error'>
-   <img src="../../../assets/img/come/yw.jpg" alt="">
+   <img src="@/assets/img/come/yw.jpg" alt="">
    <p>找不到贴吧(-1)</p>
    <div class="to-login" @click="$router.replace({name:'login-user'})">戳这去登入</div>
  </div>

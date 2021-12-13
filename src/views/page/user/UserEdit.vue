@@ -53,15 +53,15 @@
       <div class="title">选择性别</div>
       <div class="select" @click="selectd('男')">男</div>
       <div class="select" @click="selectd('女')">女</div>
-      <div class="select" @click="selectd()">取消</div>
+      <div class="select" @click="selectd(null)">取消</div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { uploadUserAvatar, updateUser } from "../../../api/user-net";
-import formatYear from "../../../utils/format-year";
-import LeftArrow from "../../../components/common/LeftArrow.vue";
+import { uploadUserAvatar, updateUser } from "@/api/user-net";
+import formatYear from "@/utils/format-year";
+import LeftArrow from "@/components/common/LeftArrow.vue";
 export default {
   name: "user-edit",
   components: { LeftArrow },
@@ -78,7 +78,6 @@ export default {
   },
   created() {
     this.userMsg = this.$route.query.userMsg;
-    console.log(this.userMsg);
   },
   computed: {
     formatYear() {
@@ -111,20 +110,25 @@ export default {
     editAssignHandle() {
       this.fileList = this.userMsg.avatar
         ? [{ url: this.userMsg.avatar, isImage: true }]
-        : null;
+        : [
+            {
+              url: require("@/assets/img/common/default/user_default.jpg"),
+              isImage: true,
+            },
+          ];
       this.nickname = this.userMsg.nickname ? this.userMsg.nickname : null;
       this.gender =
         this.userMsg.gender === null
           ? this.userMsg.gender
-          : this.userMsg.gender === 1
+          : this.userMsg.gender === "男"
           ? "男"
           : "女";
-
       this.message =
         this.userMsg.introduction === "" ||
         this.userMsg.introduction === this.defaultMsg
           ? null
           : this.userMsg.introduction;
+      console.log(this.gender);
     },
     selectd(gender) {
       this.isShowGenderPopup = false;
@@ -140,7 +144,7 @@ export default {
         const { status } = await uploadUserAvatar(data);
         if (status !== 200) throw new Error();
         return true;
-      } catch (error) {
+      } catch (err) {
         return false;
       }
     },
@@ -148,12 +152,12 @@ export default {
       try {
         const { status } = await updateUser({
           nickname: this.nickname,
-          gender: this.gender,
+          gender: this.gender || null,
           message: this.message,
         });
         if (status !== 200) throw new Error();
         return true;
-      } catch (error) {
+      } catch (err) {
         return false;
       }
     },

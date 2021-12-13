@@ -11,8 +11,9 @@
         contentCount: articleItem.tieba.contentCount,
         isTieba: true,
       }"
-      label-right="exit"
+      :label-right="labelRightChild"
       :label-type="['count']"
+      avatar-type="ellipse"
     />
     <user-label
       v-if="userLabelType === 'user'"
@@ -28,13 +29,20 @@
       :label-right="labelRightChild"
       :label-type="['time']"
       isMaxAuth
+      :click="userDetailClick"
+      avatar-type="round"
     />
     <div @touchstart="touchStart" @touchmove="touchMove" @touchend="onArticle">
       <div class="font-text">
-        <div class="text-title">{{ articleItem.title }}</div>
-        <div class="text-content" ref="contentRef">
-          {{ articleItem.test }}
-        </div>
+        <div
+          class="text-title"
+          v-html="searchText(articleItem.title ? articleItem.title : '')"
+        ></div>
+        <div
+          class="text-content"
+          v-html="searchText(articleItem.test ? articleItem.test : '')"
+          ref="contentRef"
+        ></div>
       </div>
       <!-- ------------一张图片---------- -->
       <div v-if="imageList && imageList.length === 1" class="img-wrapper-one">
@@ -151,7 +159,19 @@ export default {
     labelRightChild: {
       type: String,
       default() {
+        return "exit";
+      },
+    },
+    value: {
+      type: String,
+      default() {
         return "";
+      },
+    },
+    userDetailClick: {
+      type: Boolean,
+      default() {
+        return true;
       },
     },
   },
@@ -187,6 +207,7 @@ export default {
           params: {
             id: this.articleItem.id,
             tiebaName: this.articleItem.tieba.tiebaName,
+            tiebaAvatar:this.articleItem.tieba.tiebaAvatarUrl,
             from: this.$route.name,
           },
         });
@@ -202,12 +223,18 @@ export default {
         },
       });
     },
+    searchText(text) {
+      return text.replace(
+        new RegExp(this.value, "gi"),
+        `<span style="color: red;font-size: .35rem;">${this.value}</span>`
+      );
+    },
   },
 };
 </script>
 <style lang='less' scoped>
 .article-item {
-  width: 100vw;
+  width: 100%;
   margin-bottom: 5px;
   padding: 10px 10px 0 10px;
   background-color: rgb(255, 255, 255);

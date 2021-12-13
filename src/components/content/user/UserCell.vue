@@ -17,11 +17,14 @@
 </template>
 
 <script>
+import { getUserMessage } from "@/api/user-net";
 export default {
   name: "",
   components: {},
   data() {
-    return {};
+    return {
+      userMsg: null,
+    };
   },
   props: {
     cellList: {
@@ -36,7 +39,7 @@ export default {
     },
   },
   methods: {
-    toUserCell(item) {
+    async toUserCell(item) {
       switch (item.title) {
         case "我的收藏":
           this.$router.push({
@@ -49,13 +52,36 @@ export default {
         case "浏览历史":
           this.$router.push({
             name: "user-history",
-            // query: {
-            //   type: item.title,
-            // },
+          });
+          break;
+        case "会员中心":
+          if (!(await this.getUserMsgMethod())) return;
+          this.$router.push({
+            name: "user-member",
+            query: { userMsg: this.userMsg },
           });
           break;
         default:
+          this.$router.push({
+            name: "empty",
+            query: { name: item.title },
+          });
           break;
+      }
+    },
+    async getUserMsgMethod() {
+      try {
+        const { status, data } = await getUserMessage();
+        if (status === 401) {
+          this.$toast("登入后查看会员");
+          return;
+        }
+        if (status !== 200) throw new Error();
+        this.userMsg = data;
+        
+        return true;
+      } catch (err) {
+        this.$toast.fail("网络错误");
       }
     },
   },
