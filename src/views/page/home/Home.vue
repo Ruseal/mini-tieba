@@ -133,6 +133,7 @@ export default {
   created() {},
   mounted() {
     this.getArticleListMethod();
+    console.log(this.$children);
   },
   methods: {
     async getUserMessageMethod() {
