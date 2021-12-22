@@ -1,4 +1,4 @@
-export const LOGIN_BAIDU_USER = '登入百度账号'
+export const LOGIN_BAIDU_USER = '登入贴吧账号'
 export const LOGIN_USER = '登入'
 export const REGISTER_USER = '注册'
 export const SET_PASSWORD = '设置登入密码'

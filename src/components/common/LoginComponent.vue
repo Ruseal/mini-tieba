@@ -10,8 +10,8 @@
             ["/register-user", "/register-set-password"].includes(
               currentRoutePath
             )
-              ? "欢迎注册百度账号"
-              : "登入百度账号&nbsp;&nbsp;精彩永相随"
+              ? "欢迎注册贴吧账号"
+              : "登入贴吧账号&nbsp;&nbsp;精彩永相随"
           }}
         </h2>
         <input-box
@@ -65,7 +65,18 @@
           <div>
             {{ fromErrPrompt }}
           </div>
-          <div>忘记密码</div>
+          <div
+            @click.stop="
+              $router.push({
+                path: '/help',
+                query: {
+                  title: '用户账号',
+                },
+              })
+            "
+          >
+            获取用户账号
+          </div>
         </div>
         <van-button
           class="login-btn"
@@ -90,7 +101,7 @@
               />
             </span>
             请同意并阅读&nbsp;
-            <a href="#">百度用户协议</a>&nbsp;和&nbsp;
+            <a href="#">贴吧用户协议</a>&nbsp;和&nbsp;
             <a href="#">隐私政策</a>
           </p>
         </div>
@@ -117,7 +128,12 @@
               ? "登入"
               : "注册"
           }}</span
-          ><span>帮助</span>
+          ><span
+            @click.stop="
+              $router.push({ path: 'help', query: { title: '帮助' } })
+            "
+            >帮助</span
+          >
         </div>
       </div>
     </div>

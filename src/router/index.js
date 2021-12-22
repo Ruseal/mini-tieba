@@ -149,6 +149,11 @@ const routes = [
     name: 'empty',
     component: () => import('@/components/common/CommentEmpty.vue')
   },
+  {
+    path: '/help',
+    name: 'help',
+    component: () => import('../views/login/Help.vue')
+  },
 ]
 
 const router = new VueRouter({
